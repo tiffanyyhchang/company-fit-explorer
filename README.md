@@ -2,7 +2,7 @@
 
 An interactive visualization tool for exploring tech companies and their relationships to help you discover companies that fit your preferences and career goals.
 
-![Company Graph Explorer](https://via.placeholder.com/800x400/f3f4f6/1f2937?text=Interactive+Company+Network+Visualization)
+![Company Graph Explorer](./company-fit-explorer-ui.jpg)
 
 ## ✨ Features
 
