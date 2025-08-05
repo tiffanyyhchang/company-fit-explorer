@@ -36,7 +36,7 @@ const CompanyDetailsPanel: React.FC<CompanyDetailsPanelProps> = ({
 
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold mb-2 text-gray-900">Market Fit Score</h3>
+              <h3 className="font-semibold mb-2 text-gray-900">Candidate Market Fit Score</h3>
               <div className={`text-2xl font-bold ${getMarketFitColor(company.marketFit)}`}>
                 {company.marketFit}/10
               </div>
