@@ -108,7 +108,7 @@ export const getCytoscapeStyles = (): any[] => [
       'height': 160,
       'background-color': 'transparent',
       'background-opacity': 0,
-      'border-width': 1,
+      'border-width': 0.5,
       'border-color': '#10B981', // Green for excellent matches
       'border-opacity': 0.3,
       'z-index': -8,
@@ -122,9 +122,9 @@ export const getCytoscapeStyles = (): any[] => [
       'height': 220,
       'background-color': 'transparent',
       'background-opacity': 0,
-      'border-width': 0,
+      'border-width': 0.3,
       'border-color': '#F59E0B', // Yellow for good matches
-      'border-opacity': 1,
+      'border-opacity': 0.5,
       'z-index': -9,
       'events': 'no'
     }
@@ -137,8 +137,8 @@ export const getCytoscapeStyles = (): any[] => [
       'background-color': 'transparent',
       'background-opacity': 0,
       'border-color': '#6B7280', // Gray for fair matches
-      'border-opacity': 1,
-      'border-width': 1,
+      'border-opacity': 0.3,
+      'border-width': 0.3,
       'z-index': -10,
       'events': 'no'
     }
@@ -150,9 +150,9 @@ export const getCytoscapeStyles = (): any[] => [
       'width': 60,
       'height': 60,
       'background-color': '#3B82F6',
-      'border-width': 3,
-      'border-color': '#1F2937',
-      // 'border-color': 'white',
+      'border-width': 1,
+      //'border-color': '#1F2937',
+       'border-color': 'white',
       // 'border-color': 'transparent',
       'label': 'YOUR\nCMF\n\nJohn Smith',
       'text-valign': 'center',
@@ -165,15 +165,14 @@ export const getCytoscapeStyles = (): any[] => [
       'z-index': 10
     }
   },
-  // Company Nodes - exact specs: 25px diameter, 3px white border
+  // Company Nodes - exact specs: 25px diameter, white border
   {
     selector: 'node[type="company"]',
     style: {
       'width': 25,
       'height': 25,
       'background-color': (ele: any) => ele.data('company')?.color || '#6B7280',
-      'border-width': 0,
-      //'border-color': 'transparent',
+      'border-width': 2,
       'border-color': 'white',
       'label': (ele: any) => {
         const company = ele.data('company');
@@ -229,9 +228,9 @@ export const getCytoscapeStyles = (): any[] => [
   {
     selector: 'node.selected',
     style: {
-      'border-width': 1.5, 
-      //'border-color': 'clue'
-     'border-color': '#1F2937'
+      'border-width': 2, 
+      'border-color': 'black',
+      'z-index': 9
     }
   },
   // Highlighted Connection Lines
@@ -243,22 +242,25 @@ export const getCytoscapeStyles = (): any[] => [
       'opacity': 1,
       'transition-property': 'width, opacity',
       'transition-duration': '0.1s',
-      'transition-timing-function': 'ease-out'
+      'transition-timing-function': 'ease-out',
+      'z-index': 5
     }
   },
-  // Hover Effects
+  // Hover Effects for company nodes (keep white border on hover)
   {
-    selector: 'node:hover',
+    selector: 'node[type="company"]:hover',
     style: {
-      'border-width': 0.5,
-      'border-color': '#374151'
+      'border-width': 1,
+      'border-color': 'white',
+      'z-index': 7
     }
   },
-  // Dimmed nodes when hovering others
+  // Dimmed company nodes when hovering others
   {
-    selector: 'node.dimmed',
+    selector: 'node[type="company"].dimmed',
     style: {
       'opacity': 0.3,
+      'z-index': -1,
       'transition-property': 'opacity',
       'transition-duration': '0.1s',
       'transition-timing-function': 'ease-out'
@@ -269,9 +271,31 @@ export const getCytoscapeStyles = (): any[] => [
     selector: 'node[type="company-label"].dimmed',
     style: {
       'opacity': 0.2,
+      'z-index': -1,
       'transition-property': 'opacity',
       'transition-duration': '0.1s',
       'transition-timing-function': 'ease-out'
+    }
+  },
+  // Active (non-dimmed) company nodes should appear on top
+  {
+    selector: 'node[type="company"]:not(.dimmed)',
+    style: {
+      'z-index': 8
+    }
+  },
+  // Active (non-dimmed) label nodes should appear on top  
+  {
+    selector: 'node[type="company-label"]:not(.dimmed)',
+    style: {
+      'z-index': 8
+    }
+  },
+  // Ensure zone nodes maintain their background z-index regardless of other rules
+  {
+    selector: 'node[type="zone-excellent"], node[type="zone-good"], node[type="zone-fair"]',
+    style: {
+      'z-index': -8
     }
   }
 ];
