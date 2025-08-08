@@ -190,8 +190,41 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         connLabel.removeClass('dimmed');
       });
       
-      // Highlight connected edges
-      connectedEdges.addClass('highlighted');
+      // Highlight only outgoing edges from selected node to its declared connections
+      selectedCompany.connections.forEach((connId: number) => {
+        const edge = cy.getElementById(`edge-${selectedCompany.id}-${connId}`);
+        if (edge.length > 0) {
+          edge.addClass('highlighted');
+        }
+      });
+      
+      // Also highlight edges between companies that are BOTH directly connected to the selected node
+      const directlyConnectedIds = selectedCompany.connections.map(id => `company-${id}`);
+      
+      // Only check edges between nodes that are directly connected to the selected company
+      for (let i = 0; i < directlyConnectedIds.length; i++) {
+        const nodeId = directlyConnectedIds[i];
+        const node = cy.getElementById(nodeId);
+        const nodeEdges = node.connectedEdges();
+        
+        for (let j = 0; j < nodeEdges.length; j++) {
+          const edge = nodeEdges[j];
+          const sourceNode = edge.source();
+          const targetNode = edge.target();
+          
+          // Skip edges that connect to the selected company (already highlighted above)
+          if (sourceNode.id() === `company-${selectedCompany.id}` || 
+              targetNode.id() === `company-${selectedCompany.id}`) {
+            continue;
+          }
+          
+          // Only highlight if BOTH endpoints are in the directly connected list
+          if (directlyConnectedIds.includes(sourceNode.id()) && 
+              directlyConnectedIds.includes(targetNode.id())) {
+            edge.addClass('highlighted');
+          }
+        }
+      }
     }
   }, [selectedCompany]);
 
