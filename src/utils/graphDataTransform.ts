@@ -165,27 +165,6 @@ export const getCytoscapeStyles = (): any[] => [
       'z-index': 10
     }
   },
-  // Company Nodes - exact specs: 25px diameter, white border
-  {
-    selector: 'node[type="company"]',
-    style: {
-      'width': 25,
-      'height': 25,
-      'background-color': (ele: any) => ele.data('company')?.color || '#6B7280',
-      'border-width': 2,
-      'border-color': 'white',
-      'label': (ele: any) => {
-        const company = ele.data('company');
-        return company ? company.name.substring(0, 2).toUpperCase() : '';
-      },
-      'text-valign': 'center',
-      'text-halign': 'center',
-      'font-size': 6,
-      'font-weight': 'bold',
-      'color': 'white',
-      'z-index': 5
-    }
-  },
   // Company Label Nodes - positioned below each company
   {
     selector: 'node[type="company-label"]',
@@ -224,15 +203,6 @@ export const getCytoscapeStyles = (): any[] => [
       'z-index': 1
     }
   },
-  // Selected Node Styles
-  {
-    selector: 'node.selected',
-    style: {
-      'border-width': 2, 
-      'border-color': 'black',
-      'z-index': 9
-    }
-  },
   // Highlighted Connection Lines
   {
     selector: 'edge.highlighted',
@@ -244,15 +214,6 @@ export const getCytoscapeStyles = (): any[] => [
       'transition-duration': '0.1s',
       'transition-timing-function': 'ease-out',
       'z-index': 5
-    }
-  },
-  // Hover Effects for company nodes (keep white border on hover)
-  {
-    selector: 'node[type="company"]:hover',
-    style: {
-      'border-width': 1,
-      'border-color': 'white',
-      'z-index': 7
     }
   },
   // Dimmed company nodes when hovering others
@@ -281,14 +242,14 @@ export const getCytoscapeStyles = (): any[] => [
   {
     selector: 'node[type="company"]:not(.dimmed)',
     style: {
-      'z-index': 8
+      'z-index': 10
     }
   },
   // Active (non-dimmed) label nodes should appear on top  
   {
     selector: 'node[type="company-label"]:not(.dimmed)',
     style: {
-      'z-index': 8
+      'z-index': 10
     }
   },
   // Ensure zone nodes maintain their background z-index regardless of other rules
@@ -296,6 +257,35 @@ export const getCytoscapeStyles = (): any[] => [
     selector: 'node[type="zone-excellent"], node[type="zone-good"], node[type="zone-fair"]',
     style: {
       'z-index': -8
+    }
+  },
+  // Base Company Nodes - white border by default (placed near end for proper cascading)
+  {
+    selector: 'node[type="company"]',
+    style: {
+      'width': 25,
+      'height': 25,
+      'background-color': (ele: any) => ele.data('company')?.color || '#6B7280',
+      'border-width': 1.5,
+      'border-color': 'white',
+      'label': (ele: any) => {
+        const company = ele.data('company');
+        return company ? company.name.substring(0, 2).toUpperCase() : '';
+      },
+      'text-valign': 'center',
+      'text-halign': 'center',
+      'font-size': 6,
+      'font-weight': 'bold',
+      'color': 'white',
+      'z-index': 5
+    }
+  },
+  // Selected Node Styles - only override border color
+  {
+    selector: 'node[type="company"].selected',
+    style: {
+      'border-color': 'black',
+      'z-index': 20
     }
   }
 ];

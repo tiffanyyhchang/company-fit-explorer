@@ -48,6 +48,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     // Company hover events - simple but stable approach
     let hoverTimeout: number | null = null;
     let currentHoveredCompany: any = null;
+    let currentHoveredNode: any = null;
     
     cy.on('mouseover', 'node[type="company"]', (event) => {
       const company = event.target.data('company');
@@ -57,6 +58,15 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         clearTimeout(hoverTimeout);
         hoverTimeout = null;
       }
+      
+      // Reset previous hovered node's border (if it's not selected)
+      if (currentHoveredNode && currentHoveredNode !== event.target && !currentHoveredNode.hasClass('selected')) {
+        currentHoveredNode.style('border-color', 'white');
+      }
+      
+      // Change border color to black on hover
+      event.target.style('border-color', 'black');
+      currentHoveredNode = event.target;
       
       // Only update if this is a different company
       if (currentHoveredCompany?.id !== company.id) {
@@ -95,12 +105,18 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     });
 
     // Only clear highlights when explicitly moving away
-    cy.on('mouseout', 'node[type="company"]', () => {
+    cy.on('mouseout', 'node[type="company"]', (event) => {
       // Don't clear immediately - wait to see if mouse enters another company node
       hoverTimeout = setTimeout(() => {
         currentHoveredCompany = null;
+        currentHoveredNode = null;
         // Temporarily disable to test centering issue
         // onCompanyHover(null);
+        
+        // Reset border color to white (unless selected)
+        if (!event.target.hasClass('selected')) {
+          event.target.style('border-color', 'white');
+        }
         
         if (!selectedCompany) {
           cy.nodes().removeClass('dimmed');
