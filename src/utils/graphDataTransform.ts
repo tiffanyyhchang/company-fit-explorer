@@ -64,17 +64,30 @@ export const transformToGraphData = (cmf: UserCMF, companies: Company[]): GraphD
       },
       position: calculatePosition(company, centerX, centerY, 1)
     })),
-    // Company label nodes - positioned below each company
+    // Company name labels - positioned below each company
     ...companies.map(company => {
       const pos = calculatePosition(company, centerX, centerY, 1);
       return {
         data: {
-          id: `label-${company.id}`,
-          label: `${company.name}\n${company.matchScore}%`,
-          type: 'company-label' as const,
+          id: `name-label-${company.id}`,
+          label: company.name,
+          type: 'company-name-label' as const,
           company: company
         },
-        position: { x: pos.x, y: pos.y + 22 } // 20px below the company node for better spacing
+        position: { x: pos.x, y: pos.y + 20 } // Below the company node
+      };
+    }),
+    // Company percentage labels - positioned below the name labels
+    ...companies.map(company => {
+      const pos = calculatePosition(company, centerX, centerY, 1);
+      return {
+        data: {
+          id: `percent-label-${company.id}`,
+          label: `${company.matchScore}%`,
+          type: 'company-percent-label' as const,
+          company: company
+        },
+        position: { x: pos.x, y: pos.y + 26 } // Closer to the name label
       };
     })
   ];
@@ -165,27 +178,42 @@ export const getCytoscapeStyles = (): any[] => [
       'z-index': 10
     }
   },
-  // Company Label Nodes - positioned below each company
+  // Company Name Label Nodes - company names below each company
   {
-    selector: 'node[type="company-label"]',
+    selector: 'node[type="company-name-label"]',
     style: {
       'width': 60,
-      'height': 30,
+      'height': 15,
       'background-color': 'white',
       'background-opacity': 0,
-      //'background-opacity': 0.8,
-      // 'border-width': 0,
-      // 'border-color': '#e5e7eb',
       'border-opacity': 0,
-      // 'shape': 'round-rectangle',
       'label': 'data(label)',
       'text-valign': 'center',
       'text-halign': 'center',
       'font-size': 5,
-      'font-weight': 450,
-      // 'font-weight': 'bold',
-      //'color': '#9CA3AF',
-      'color': '#1f2937',
+      'font-weight': 'bold',
+      'color': '#1f2937', // Darker color for company name
+      'text-wrap': 'wrap',
+      'text-max-width': '55px',
+      'z-index': 5,
+      'events': 'no'
+    }
+  },
+  // Company Percentage Label Nodes - match percentages below company names
+  {
+    selector: 'node[type="company-percent-label"]',
+    style: {
+      'width': 60,
+      'height': 15,
+      'background-color': 'white',
+      'background-opacity': 0,
+      'border-opacity': 0,
+      'label': 'data(label)',
+      'text-valign': 'center',
+      'text-halign': 'center',
+      'font-size': 4.5,
+      'font-weight': 450, // Lighter weight for percentage
+      'color': '#6B7280', // Lighter gray color for percentage
       'text-wrap': 'wrap',
       'text-max-width': '55px',
       'z-index': 5,
@@ -228,9 +256,20 @@ export const getCytoscapeStyles = (): any[] => [
       'transition-timing-function': 'ease-out'
     }
   },
-  // Dimmed label nodes
+  // Dimmed company name label nodes
   {
-    selector: 'node[type="company-label"].dimmed',
+    selector: 'node[type="company-name-label"].dimmed',
+    style: {
+      'opacity': 0.2,
+      'z-index': -1,
+      'transition-property': 'opacity',
+      'transition-duration': '0.1s',
+      'transition-timing-function': 'ease-out'
+    }
+  },
+  // Dimmed company percentage label nodes  
+  {
+    selector: 'node[type="company-percent-label"].dimmed',
     style: {
       'opacity': 0.2,
       'z-index': -1,
@@ -246,11 +285,17 @@ export const getCytoscapeStyles = (): any[] => [
       'z-index': 10
     }
   },
-  // Active (non-dimmed) label nodes should appear on top  
+  // Active (non-dimmed) name label nodes should appear on top  
   {
-    selector: 'node[type="company-label"]:not(.dimmed)',
+    selector: 'node[type="company-name-label"]:not(.dimmed)',
     style: {
-      //'color': '#1f2937',
+      'z-index': 10
+    }
+  },
+  // Active (non-dimmed) percentage label nodes should appear on top  
+  {
+    selector: 'node[type="company-percent-label"]:not(.dimmed)',
+    style: {
       'z-index': 10
     }
   },

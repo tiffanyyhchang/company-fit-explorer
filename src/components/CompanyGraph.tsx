@@ -78,23 +78,29 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
           // Highlight connected nodes and edges
           const connectedNodes = event.target.connectedEdges().connectedNodes();
           const allCompanyNodes = cy.nodes('[type="company"]');
-          const allLabelNodes = cy.nodes('[type="company-label"]');
+          const allNameLabelNodes = cy.nodes('[type="company-name-label"]');
+          const allPercentLabelNodes = cy.nodes('[type="company-percent-label"]');
           
           // Dim all company and label nodes first
           allCompanyNodes.addClass('dimmed');
-          allLabelNodes.addClass('dimmed');
+          allNameLabelNodes.addClass('dimmed');
+          allPercentLabelNodes.addClass('dimmed');
           
           // Highlight current node and connected nodes
           event.target.removeClass('dimmed');
           connectedNodes.filter('[type="company"]').removeClass('dimmed');
           
-          // Also highlight the label for current and connected companies
-          const currentLabel = cy.getElementById(`label-${company.id}`);
-          currentLabel.removeClass('dimmed');
+          // Also highlight the labels for current and connected companies
+          const currentNameLabel = cy.getElementById(`name-label-${company.id}`);
+          const currentPercentLabel = cy.getElementById(`percent-label-${company.id}`);
+          currentNameLabel.removeClass('dimmed');
+          currentPercentLabel.removeClass('dimmed');
           
           company.connections.forEach((connId: number) => {
-            const connLabel = cy.getElementById(`label-${connId}`);
-            connLabel.removeClass('dimmed');
+            const connNameLabel = cy.getElementById(`name-label-${connId}`);
+            const connPercentLabel = cy.getElementById(`percent-label-${connId}`);
+            connNameLabel.removeClass('dimmed');
+            connPercentLabel.removeClass('dimmed');
           });
           
           // Highlight only outgoing edges from hovered node to its declared connections
@@ -203,23 +209,29 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       const connectedEdges = selectedNode.connectedEdges();
       const connectedNodes = connectedEdges.connectedNodes();
       const allCompanyNodes = cy.nodes('[type="company"]');
-      const allLabelNodes = cy.nodes('[type="company-label"]');
+      const allNameLabelNodes = cy.nodes('[type="company-name-label"]');
+      const allPercentLabelNodes = cy.nodes('[type="company-percent-label"]');
       
       // Dim all company and label nodes first
       allCompanyNodes.addClass('dimmed');
-      allLabelNodes.addClass('dimmed');
+      allNameLabelNodes.addClass('dimmed');
+      allPercentLabelNodes.addClass('dimmed');
       
       // Highlight selected node and connected nodes
       selectedNode.removeClass('dimmed').addClass('selected');
       connectedNodes.filter('[type="company"]').removeClass('dimmed');
       
-      // Also highlight the label for selected and connected companies
-      const selectedLabel = cy.getElementById(`label-${selectedCompany.id}`);
-      selectedLabel.removeClass('dimmed');
+      // Also highlight the labels for selected and connected companies
+      const selectedNameLabel = cy.getElementById(`name-label-${selectedCompany.id}`);
+      const selectedPercentLabel = cy.getElementById(`percent-label-${selectedCompany.id}`);
+      selectedNameLabel.removeClass('dimmed');
+      selectedPercentLabel.removeClass('dimmed');
       
       selectedCompany.connections.forEach((connId: number) => {
-        const connLabel = cy.getElementById(`label-${connId}`);
-        connLabel.removeClass('dimmed');
+        const connNameLabel = cy.getElementById(`name-label-${connId}`);
+        const connPercentLabel = cy.getElementById(`percent-label-${connId}`);
+        connNameLabel.removeClass('dimmed');
+        connPercentLabel.removeClass('dimmed');
       });
       
       // Highlight only outgoing edges from selected node to its declared connections

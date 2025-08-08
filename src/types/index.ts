@@ -32,7 +32,7 @@ export interface GraphData {
     data: {
       id: string;
       label: string;
-      type: 'cmf' | 'company' | 'company-label' | 'zone-excellent' | 'zone-good' | 'zone-fair';
+      type: 'cmf' | 'company' | 'company-label' | 'company-name-label' | 'company-percent-label' | 'zone-excellent' | 'zone-good' | 'zone-fair';
       company?: Company;
       cmf?: UserCMF;
     };
