@@ -61,7 +61,8 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       // Only update if this is a different company
       if (currentHoveredCompany?.id !== company.id) {
         currentHoveredCompany = company;
-        onCompanyHover(company);
+        // Temporarily disable to test centering issue
+        // onCompanyHover(company);
         
         if (!selectedCompany) {
           // Highlight connected nodes and edges
@@ -98,14 +99,15 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       // Don't clear immediately - wait to see if mouse enters another company node
       hoverTimeout = setTimeout(() => {
         currentHoveredCompany = null;
-        onCompanyHover(null);
+        // Temporarily disable to test centering issue
+        // onCompanyHover(null);
         
         if (!selectedCompany) {
           cy.nodes().removeClass('dimmed');
           cy.edges().removeClass('highlighted');
         }
         hoverTimeout = null;
-      }, 200); // Longer delay for more stability
+      }, 2); // Quick response now that callback issues are resolved
     });
 
     // Company click events
@@ -176,9 +178,6 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       
       // Highlight connected edges
       connectedEdges.addClass('highlighted');
-      
-      // Center on selected node
-      cy.center(selectedNode);
     }
   }, [selectedCompany]);
 
