@@ -1,4 +1,4 @@
-export { default as CompanyGraphExplorer } from './CompanyGraphExplorer';
-export { default as ControlPanel } from './ControlPanel';
-export { default as CompanyDetailsPanel } from './CompanyDetailsPanel';
-export { default as GraphContainer } from './GraphContainer';
+// CMF Graph Components
+export { default as CMFGraphExplorer } from './CMFGraphExplorer';
+export { default as CompanyGraph } from './CompanyGraph';
+export { default as CompanyDetailPanel } from './CompanyDetailPanel';

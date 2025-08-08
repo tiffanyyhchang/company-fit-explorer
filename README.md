@@ -1,27 +1,29 @@
-# Company Fit Explorer - Interactive Company Graph
+# Company Fit Explorer - Interactive CMF Graph Visualization
 
-An interactive visualization tool for exploring tech companies and their relationships to help you discover companies that fit your preferences and career goals.
+An interactive CMF (Candidate Market Fit) visualization tool that helps you discover companies that align with your career goals and preferences. Companies are positioned around your CMF profile based on match scores, with visual indicators for connection strength and match quality.
 
 ![Company Graph Explorer](./company-fit-explorer-ui.jpg)
 
 ## ✨ Features
 
-- **Interactive Network Graph**: Visualize companies as nodes with relationships between them
-- **Market Fit Filtering**: Adjust the market fit threshold to focus on companies that match your preferences
-- **Company Details Panel**: Click on any company to see detailed information including:
-  - Market fit score
-  - Minimum compensation
-  - Company culture keywords
-  - Company type and location
-- **Relationship Mapping**: Understand company relationships:
-  - 🔴 **Competitors** - Direct market competitors
-  - 🟢 **Partners** - Strategic partnerships
-  - 🟣 **Parent/Child** - Ownership relationships
-  - 🟡 **Ecosystem** - Companies in similar ecosystems
-- **Visual Market Fit Indicators**: 
-  - Green border: High market fit
-  - Yellow border: Medium market fit
-  - Gray border: Low market fit
+- **CMF-Centered Graph**: Your Candidate Market Fit profile sits at the center with companies positioned around it based on match scores
+- **Precise Company Positioning**: Companies arranged in perfect circles around your CMF using exact angle/distance calculations
+- **Match Quality Zones**: Visual background zones indicate excellent (90%+), good (80%+), and fair matches
+- **Interactive Company Details**: Click any company to see comprehensive information:
+  - Match score percentage and detailed match reasons
+  - Industry, stage, location, and team size
+  - Open roles and remote work policies
+  - Connection types to other companies in your network
+- **Connection Highlighting**: Hover over companies to see their relationships:
+  - 🔵 **AI Competitors** - Companies in similar AI/ML spaces
+  - 🟢 **Similar Culture** - Companies with similar values and culture
+  - 🟡 **Platform Focus** - Companies with platform/API strategies
+  - 🟣 **Research Focus** - Research-oriented organizations
+- **Smart Visual Design**: 
+  - Company nodes sized and colored by match quality
+  - 2-letter abbreviations inside company circles
+  - Company names and match percentages displayed below nodes
+  - Smooth hover effects and connection highlighting
 
 ## 🚀 Quick Start
 
@@ -70,78 +72,113 @@ npm run dev
 ```
 src/
 ├── components/           # React components
-│   ├── CompanyGraphExplorer.tsx    # Main component
-│   ├── ControlPanel.tsx            # Market fit controls
-│   ├── CompanyDetailsPanel.tsx     # Company info panel
-│   ├── GraphContainer.tsx          # Graph visualization container
-│   └── index.ts                    # Component exports
+│   ├── CMFGraphExplorer.tsx         # Main CMF graph explorer component
+│   ├── CompanyGraph.tsx             # Cytoscape graph visualization
+│   ├── CompanyDetailPanel.tsx       # Company details sidebar
+│   └── index.ts                     # Component exports
 ├── data/                # Static data and configuration
-│   └── companies.ts                # Company data and relationships
+│   └── companies.ts                 # CMF profile and company dataset
 ├── types/               # TypeScript type definitions
-│   └── index.ts                    # All type definitions
+│   └── index.ts                     # CMF, Company, and graph type definitions
 ├── utils/               # Utility functions and configurations
-│   ├── index.ts                    # Helper functions
-│   └── cytoscapeConfig.ts          # Graph styling configuration
-├── styles/              # Styling files
-│   └── index.css                   # Global styles and Tailwind imports
+│   ├── graphDataTransform.ts        # Graph positioning and styling logic
+│   └── index.ts                     # Helper functions
 ├── App.tsx              # Root application component
 └── main.tsx             # Application entry point
 ```
 
 ## 📊 Data Structure
 
-The application uses a flexible data structure for companies:
+The application uses structured data for CMF profiles and companies:
 
 ```typescript
-interface CompanyData {
-  id: string;           // Unique identifier
-  name: string;         // Company name
-  logo: string;         // Logo URL
-  location: string;     // Company location
-  minComp: number;      // Minimum compensation
-  culture: string[];    // Culture keywords
-  marketFit: number;    // Market fit score (1-10)
-  type: string;         // Company type (tech-giant, ai-startup, etc.)
+interface UserCMF {
+  id: string;
+  name: string;
+  mustHaves: string[];        // Critical requirements
+  wantToHave: string[];       // Nice-to-have preferences  
+  experience: string[];       // Relevant experience areas
+  targetRole: string;         // Desired position level
+  targetCompanies: string;    // Company stage preference
+}
+
+interface Company {
+  id: number;
+  name: string;
+  logo: string;               // Company logo URL
+  matchScore: number;         // CMF match percentage (0-100)
+  industry: string;           // Company industry
+  stage: string;              // Funding/company stage
+  location: string;           // Primary location
+  employees: string;          // Team size range
+  remote: string;             // Remote work policy
+  openRoles: number;          // Available positions
+  connections: number[];      // Connected company IDs
+  connectionTypes: Record<number, string>; // Relationship types
+  matchReasons: string[];     // Why this company matches your CMF
+  color: string;              // Node color based on match quality
+  angle?: number;             // Position angle around CMF center
+  distance?: number;          // Distance from center based on match score
 }
 ```
 
 ## 🎨 Customization
 
-### Adding New Companies
+### Updating Your CMF Profile
 
-Edit the `companyData` object in `company_graph_explorer.tsx`:
+Edit the `sampleUserCMF` object in `src/data/companies.ts`:
 
-```javascript
-const companyData = {
-  nodes: [
-    {
-      data: {
-        id: 'your-company',
-        name: 'Your Company',
-        logo: 'https://logo.clearbit.com/yourcompany.com',
-        location: 'City, State',
-        minComp: 150000,
-        culture: ['innovative', 'fast-paced', 'collaborative'],
-        marketFit: 8,
-        type: 'startup'
-      }
-    }
-    // ... more companies
+```typescript
+const sampleUserCMF: UserCMF = {
+  id: "your-id",
+  name: "Your Name", 
+  mustHaves: [
+    "Your critical requirements",
+    "Non-negotiable needs"
   ],
-  edges: [
-    // Define relationships between companies
-    { data: { source: 'company1', target: 'company2', relationship: 'competitor' } }
-  ]
+  wantToHave: [
+    "Nice-to-have preferences",
+    "Additional interests"
+  ],
+  experience: ["Your experience areas"],
+  targetRole: "Your desired role level",
+  targetCompanies: "Your company stage preference"
 };
 ```
 
-### Customizing Market Fit Calculation
+### Adding New Companies
 
-The market fit score is currently a static value, but you can enhance it to be dynamic based on:
-- Your skills and interests
-- Salary requirements
-- Location preferences
-- Company culture preferences
+Add companies to the `sampleCompanies` array in `src/data/companies.ts`:
+
+```typescript
+{
+  id: 16,
+  name: "New Company",
+  logo: "https://logo.clearbit.com/company.com",
+  matchScore: 85,
+  industry: "Industry",
+  stage: "Company Stage", 
+  location: "Location",
+  employees: "Team Size",
+  remote: "Remote Policy",
+  openRoles: 5,
+  connections: [1, 3], // IDs of connected companies
+  connectionTypes: { 1: "Competitor", 3: "Partner" },
+  matchReasons: ["Reason why it matches your CMF"],
+  color: "#F59E0B", // Color based on match score
+  angle: 45,        // Position angle around center
+  distance: 100     // Distance from center
+}
+```
+
+### Customizing Match Score Calculation
+
+Match scores can be enhanced to be dynamic based on:
+- Alignment with your must-have requirements
+- Geographic location preferences  
+- Company culture and values fit
+- Role level and compensation expectations
+- Industry and technical focus areas
 
 ### Styling Customization
 
@@ -149,12 +186,14 @@ The application uses Tailwind CSS. Key styling areas:
 - `src/index.css` - Global styles
 - Component classes in the TSX file for layout and colors
 
-## 🔄 Company Relationships
+## 🔄 Company Connections
 
-- **Competitor**: Companies competing in the same market
-- **Partner**: Strategic partnerships or integrations  
-- **Parent**: Ownership relationships (parent company → subsidiary)
-- **Ecosystem**: Companies in related ecosystems or similar focus areas
+- **AI Competitor**: Companies in similar AI/ML technology spaces
+- **Similar Culture**: Organizations with comparable values and work culture
+- **Platform Focus**: Companies with platform, API, or infrastructure strategies  
+- **Research Focus**: Research-oriented organizations and labs
+- **Developer Tools**: Companies building tools and platforms for developers
+- **Fintech APIs**: Financial technology and payment processing companies
 
 ## 📱 Responsive Design
 

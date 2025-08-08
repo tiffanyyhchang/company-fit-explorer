@@ -1,54 +1,70 @@
-export interface CompanyData {
+export interface UserCMF {
   id: string;
   name: string;
+  mustHaves: string[];
+  wantToHave: string[];
+  experience: string[];
+  targetRole: string;
+  targetCompanies: string;
+}
+
+export interface Company {
+  id: number;
+  name: string;
   logo: string;
+  matchScore: number;
+  industry: string;
+  stage: string;
   location: string;
-  minComp: number;
-  culture: string[];
-  marketFit: number;
-  type: CompanyType;
-}
-
-export interface CompanyNode {
-  data: CompanyData;
-}
-
-export interface CompanyEdge {
-  data: {
-    source: string;
-    target: string;
-    relationship: RelationshipType;
-  };
+  employees: string;
+  remote: string;
+  openRoles: number;
+  connections: number[];
+  connectionTypes: Record<number, string>;
+  matchReasons: string[];
+  color: string;
+  angle?: number;
+  distance?: number;
 }
 
 export interface GraphData {
-  nodes: CompanyNode[];
-  edges: CompanyEdge[];
+  nodes: Array<{
+    data: {
+      id: string;
+      label: string;
+      type: 'cmf' | 'company' | 'company-label' | 'zone-excellent' | 'zone-good' | 'zone-fair';
+      company?: Company;
+      cmf?: UserCMF;
+    };
+    position?: { x: number; y: number };
+  }>;
+  edges: Array<{
+    data: {
+      id: string;
+      source: string;
+      target: string;
+      relationship: string;
+    };
+  }>;
 }
 
-export type CompanyType = 
-  | 'tech-giant' 
-  | 'ai-startup' 
-  | 'growth' 
-  | 'established' 
-  | 'startup';
-
-export type RelationshipType = 
-  | 'competitor' 
-  | 'partner' 
-  | 'parent' 
-  | 'ecosystem';
-
-export interface ControlPanelProps {
-  marketFitScore: number;
-  onMarketFitChange: (score: number) => void;
+// CMF Component Props
+export interface CMFGraphExplorerProps {
+  userCMF: UserCMF;
+  companies: Company[];
 }
 
-export interface CompanyDetailsPanelProps {
-  company: CompanyData | null;
-  getMarketFitColor: (score: number) => string;
+export interface CompanyGraphProps {
+  cmf: UserCMF;
+  companies: Company[];
+  selectedCompany: Company | null;
+  hoveredCompany: Company | null;
+  onCompanySelect: (company: Company | null) => void;
+  onCompanyHover: (company: Company | null) => void;
 }
 
-export interface GraphContainerProps {
-  cyRef: React.RefObject<HTMLDivElement>;
+export interface CompanyDetailPanelProps {
+  selectedCompany: Company | null;
+  allCompanies: Company[];
+  onCompanySelect: (company: Company) => void;
 }
