@@ -97,9 +97,41 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
             connLabel.removeClass('dimmed');
           });
           
-          // Highlight connected edges
-          const connectedEdges = event.target.connectedEdges();
-          connectedEdges.addClass('highlighted');
+          // Highlight only outgoing edges from hovered node to its declared connections
+          company.connections.forEach((connId: number) => {
+            const edge = cy.getElementById(`edge-${company.id}-${connId}`);
+            if (edge.length > 0) {
+              edge.addClass('highlighted');
+            }
+          });
+          
+          // Also highlight edges between companies that are BOTH directly connected to the hovered node
+          const directlyConnectedIds = company.connections.map((id: number) => `company-${id}`);
+          
+          // Only check edges between nodes that are directly connected to the hovered company
+          for (let i = 0; i < directlyConnectedIds.length; i++) {
+            const nodeId = directlyConnectedIds[i];
+            const node = cy.getElementById(nodeId);
+            const nodeEdges = node.connectedEdges();
+            
+            for (let j = 0; j < nodeEdges.length; j++) {
+              const edge = nodeEdges[j];
+              const sourceNode = edge.source();
+              const targetNode = edge.target();
+              
+              // Skip edges that connect to the hovered company (already highlighted above)
+              if (sourceNode.id() === `company-${company.id}` || 
+                  targetNode.id() === `company-${company.id}`) {
+                continue;
+              }
+              
+              // Only highlight if BOTH endpoints are in the directly connected list
+              if (directlyConnectedIds.includes(sourceNode.id()) && 
+                  directlyConnectedIds.includes(targetNode.id())) {
+                edge.addClass('highlighted');
+              }
+            }
+          }
         }
       }
     });
