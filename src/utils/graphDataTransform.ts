@@ -74,7 +74,7 @@ export const transformToGraphData = (cmf: UserCMF, companies: Company[]): GraphD
           type: 'company-label' as const,
           company: company
         },
-        position: { x: pos.x, y: pos.y + 20 } // 20px below the company node for better spacing
+        position: { x: pos.x, y: pos.y + 22 } // 20px below the company node for better spacing
       };
     })
   ];
@@ -184,7 +184,8 @@ export const getCytoscapeStyles = (): any[] => [
       'font-size': 5,
       'font-weight': 450,
       // 'font-weight': 'bold',
-      'color': '#1F2937',
+      //'color': '#9CA3AF',
+      'color': '#1f2937',
       'text-wrap': 'wrap',
       'text-max-width': '55px',
       'z-index': 5,
@@ -213,7 +214,7 @@ export const getCytoscapeStyles = (): any[] => [
       'transition-property': 'width, opacity',
       'transition-duration': '0.1s',
       'transition-timing-function': 'ease-out',
-      'z-index': 5
+      'z-index': 4
     }
   },
   // Dimmed company nodes when hovering others
@@ -249,6 +250,7 @@ export const getCytoscapeStyles = (): any[] => [
   {
     selector: 'node[type="company-label"]:not(.dimmed)',
     style: {
+      //'color': '#1f2937',
       'z-index': 10
     }
   },
@@ -277,15 +279,36 @@ export const getCytoscapeStyles = (): any[] => [
       'font-size': 6,
       'font-weight': 'bold',
       'color': 'white',
-      'z-index': 5
+      'z-index': 5,
+      'transition-property': 'width, height, border-color',
+      'transition-duration': '0.25s',
+      'transition-timing-function': 'ease-out'
     }
   },
-  // Selected Node Styles - only override border color
+  // Selected Node Styles - black border and larger with transition
   {
     selector: 'node[type="company"].selected',
     style: {
+      'width': 30,
+      'height': 30,
       'border-color': 'black',
-      'z-index': 20
+      'z-index': 20,
+      'transition-property': 'width, height, border-color',
+      'transition-duration': '0s',
+      'transition-timing-function': 'ease-out'
+    }
+  },
+  // Hover Node Styles - black border and larger with transition
+  {
+    selector: 'node[type="company"].hovered',
+    style: {
+      'width': 30,
+      'height': 30,
+      'border-color': 'black',
+      'z-index': 15,
+      'transition-property': 'width, height, border-color',
+      'transition-duration': '0.25s',
+      'transition-timing-function': 'ease-out'
     }
   }
 ];

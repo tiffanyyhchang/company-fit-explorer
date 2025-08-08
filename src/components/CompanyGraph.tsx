@@ -59,13 +59,13 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         hoverTimeout = null;
       }
       
-      // Reset previous hovered node's border (if it's not selected)
-      if (currentHoveredNode && currentHoveredNode !== event.target && !currentHoveredNode.hasClass('selected')) {
-        currentHoveredNode.style('border-color', 'white');
+      // Reset previous hovered node's class (if it's not selected)
+      if (currentHoveredNode && currentHoveredNode !== event.target) {
+        currentHoveredNode.removeClass('hovered');
       }
       
-      // Change border color to black on hover
-      event.target.style('border-color', 'black');
+      // Add hovered class for CSS transition
+      event.target.addClass('hovered');
       currentHoveredNode = event.target;
       
       // Only update if this is a different company
@@ -113,10 +113,8 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         // Temporarily disable to test centering issue
         // onCompanyHover(null);
         
-        // Reset border color to white (unless selected)
-        if (!event.target.hasClass('selected')) {
-          event.target.style('border-color', 'white');
-        }
+        // Remove hovered class to return to default style
+        event.target.removeClass('hovered');
         
         if (!selectedCompany) {
           cy.nodes().removeClass('dimmed');
