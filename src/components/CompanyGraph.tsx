@@ -13,6 +13,14 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
 }) => {
   const cyRef = useRef<HTMLDivElement>(null);
   const cyInstance = useRef<cytoscape.Core | null>(null);
+  const onCompanySelectRef = useRef(onCompanySelect);
+  const onCompanyHoverRef = useRef(onCompanyHover);
+  const selectedCompanyRef = useRef(selectedCompany);
+
+  // Keep refs updated
+  onCompanySelectRef.current = onCompanySelect;
+  onCompanyHoverRef.current = onCompanyHover;
+  selectedCompanyRef.current = selectedCompany;
 
   useEffect(() => {
     if (!cyRef.current) return;
@@ -74,7 +82,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         // Temporarily disable to test centering issue
         // onCompanyHover(company);
         
-        if (!selectedCompany) {
+        if (!selectedCompanyRef.current) {
           // Highlight connected nodes and edges
           const connectedNodes = event.target.connectedEdges().connectedNodes();
           const allCompanyNodes = cy.nodes('[type="company"]');
@@ -154,7 +162,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         // Remove hovered class to return to default style
         event.target.removeClass('hovered');
         
-        if (!selectedCompany) {
+        if (!selectedCompanyRef.current) {
           cy.nodes().removeClass('dimmed');
           cy.edges().removeClass('highlighted');
         }
@@ -165,13 +173,13 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     // Company click events
     cy.on('tap', 'node[type="company"]', (event) => {
       const company = event.target.data('company');
-      onCompanySelect(company);
+      onCompanySelectRef.current(company);
     });
 
     // Background click to deselect
     cy.on('tap', (event) => {
       if (event.target === cy) {
-        onCompanySelect(null);
+        onCompanySelectRef.current(null);
       }
     });
 
@@ -191,7 +199,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
         cyInstance.current.destroy();
       }
     };
-  }, [cmf, companies, onCompanyHover, onCompanySelect]);
+  }, [cmf, companies]);
 
   // Handle selection changes from external components
   useEffect(() => {
