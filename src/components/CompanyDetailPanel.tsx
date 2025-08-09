@@ -219,7 +219,10 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
 
         {/* Action Buttons */}
         <div className="space-y-3 pt-4 border-t border-gray-200">
-          <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+          <button 
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            onClick={() => window.open(selectedCompany.careerUrl, '_blank')}
+          >
             View Jobs at {selectedCompany.name}
           </button>
           <button className="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">

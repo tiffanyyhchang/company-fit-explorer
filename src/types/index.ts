@@ -12,6 +12,7 @@ export interface Company {
   id: number;
   name: string;
   logo: string;
+  careerUrl: string;
   matchScore: number;
   industry: string;
   stage: string;
