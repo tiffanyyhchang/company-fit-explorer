@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install dependencies
@@ -38,3 +38,4 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage/coverage-final.json
         fail_ci_if_error: false
+      continue-on-error: true
