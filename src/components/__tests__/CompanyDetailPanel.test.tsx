@@ -3,6 +3,27 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { Company } from '../../types'
 import CompanyDetailPanel from '../CompanyDetailPanel'
 
+/**
+ * @testSuite CompanyDetailPanel
+ * @description Comprehensive testing of the main UI component for company information display
+ * 
+ * @covers 16 critical test scenarios:
+ * - User interaction workflows (company selection, navigation, button clicks)
+ * - Data rendering accuracy (company info, match scores, related companies)
+ * - External functionality ("View Jobs" career URL integration)
+ * - Error handling (logo fallbacks, missing data scenarios)  
+ * - Accessibility compliance (ARIA labels, keyboard navigation)
+ * - State management (selected vs unselected company states)
+ * 
+ * @regressionProtection Prevents:
+ * ❌ Broken company selection/deselection workflows
+ * ❌ Failed "View Jobs" button functionality  
+ * ❌ Incorrect data display or missing company information
+ * ❌ Broken related company navigation
+ * ❌ Accessibility violations affecting screen readers
+ * ❌ Logo loading failures without proper fallbacks
+ * ❌ State inconsistencies during user interactions
+ */
 describe('CompanyDetailPanel', () => {
   const mockCompanies: Company[] = [
     {

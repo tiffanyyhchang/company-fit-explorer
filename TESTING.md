@@ -1,8 +1,12 @@
 # Testing Guide - Company Fit Explorer
 
+[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](./TESTING.md)
+[![Coverage](https://img.shields.io/badge/coverage-85%25-green)](./TESTING.md#coverage-reports)
+[![TDD](https://img.shields.io/badge/development-TDD-blue)](./TESTING.md#test-driven-development-workflow)
+
 ## Overview
 
-This project uses a comprehensive test-driven development (TDD) approach with Vitest and React Testing Library to ensure code quality and prevent regressions.
+This project uses a comprehensive test-driven development (TDD) approach with **71 tests across 5 test suites** to ensure code quality and prevent regressions. Every critical function, component, and user workflow is protected by automated tests.
 
 ## Test Setup
 
@@ -92,22 +96,70 @@ Coverage excludes:
 - Main entry point
 - Build output
 
-## Test Categories
+## Test Categories & Documentation
 
-### 1. Core Business Logic (71 tests)
-✅ **Utility Functions**: Currency, formatting, avatars  
-✅ **Graph Transformations**: Position calculations, data mapping  
-✅ **Type Safety**: Interface validation, data integrity  
+### 1. **Utility Functions** (11 tests) 📍 `src/utils/__tests__/index.test.ts`
+**What they protect:**
+- ✅ Currency formatting with proper commas and symbols
+- ✅ Company type capitalization and hyphen handling  
+- ✅ Avatar URL generation with encoding
+- ✅ Edge cases: empty strings, special characters, negative numbers
 
-### 2. User Interface (16 tests)
-✅ **Component Rendering**: Display logic, conditional rendering  
-✅ **User Interactions**: Clicks, hovers, navigation  
-✅ **Accessibility**: Screen readers, keyboard navigation  
+**Prevents:** Display bugs, broken formatting, invalid URLs
 
-### 3. Data Integration (15 tests)
-✅ **Real Data**: 15-company dataset validation  
-✅ **Career URLs**: All external links verified  
-✅ **Relationships**: Company connections and types  
+### 2. **Graph Transformations** (19 tests) 📍 `src/utils/__tests__/graphDataTransform.test.ts`
+**What they protect:**
+- ✅ Mathematical position calculations (angles, distances, zoom)
+- ✅ Graph data structure transformations (nodes, edges, labels)
+- ✅ Match score color coding (90%+ green, 80-89% yellow, <80% gray)
+- ✅ Complete Cytoscape styling configurations
+
+**Prevents:** Broken graph positioning, wrong colors, missing visual elements
+
+### 3. **Type Safety** (10 tests) 📍 `src/types/__tests__/index.test.ts`
+**What they protect:**
+- ✅ UserCMF and Company interface validation
+- ✅ Required field enforcement and data structure integrity
+- ✅ URL validation, color hex codes, match score ranges
+- ✅ Connection relationship consistency
+
+**Prevents:** Runtime type errors, invalid data, missing required fields
+
+### 4. **Component Logic** (16 tests) 📍 `src/components/__tests__/CompanyDetailPanel.test.tsx`
+**What they protect:**
+- ✅ Company rendering (list view, detail view, match scores)
+- ✅ User interactions (clicks, navigation, button functionality)
+- ✅ "View Jobs" career URL integration with external sites
+- ✅ Related company connections and navigation flows
+- ✅ Error handling (logo fallbacks, missing data scenarios)
+- ✅ Accessibility compliance (ARIA labels, keyboard navigation)
+
+**Prevents:** Broken user workflows, failed external links, accessibility violations
+
+### 5. **Integration Testing** (15 tests) 📍 `src/__tests__/integration.test.tsx`
+**What they protect:**
+- ✅ Complete dataset integrity (all 15 companies validated)
+- ✅ End-to-end user workflows with real company data
+- ✅ Career URL functionality for all external links
+- ✅ Performance benchmarks and render time validation
+- ✅ Cross-component state management and data consistency
+
+**Prevents:** Data corruption, broken external integrations, performance regressions
+
+## Quick Test Documentation Generator
+
+Generate real-time test summary:
+```bash
+npm run docs:tests
+```
+
+Output example:
+```
+🧪 Test Documentation Summary
+📁 src/utils/__tests__/index.test.ts - 11 tests
+📁 src/components/__tests__/CompanyDetailPanel.test.tsx - 16 tests  
+🎯 Total Tests: 71 across 5 test files
+```  
 
 ## Test-Driven Development Workflow
 

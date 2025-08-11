@@ -1,5 +1,10 @@
 # Company Fit Explorer - Interactive CMF Graph Visualization
 
+[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](./TESTING.md)
+[![Coverage](https://img.shields.io/badge/coverage-85%25-green)](./TESTING.md#coverage-reports)
+[![TDD](https://img.shields.io/badge/development-TDD-blue)](./TESTING.md#test-driven-development-workflow)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen)](./.github/workflows/ci.yml)
+
 An interactive CMF (Candidate Market Fit) visualization tool that helps you discover companies that align with your career goals and preferences. Companies are positioned around your CMF profile based on match scores, with visual indicators for connection strength and match quality.
 
 ![Company Graph Explorer](./company-fit-explorer-ui.jpg)
@@ -52,12 +57,43 @@ npm run dev
 
 4. Open your browser and navigate to `http://localhost:5173`
 
+## 🧪 Test-Driven Development
+
+This project uses comprehensive TDD with **71 tests** covering all core functionality, ensuring reliability and preventing regressions.
+
+### Quick Test Commands
+```bash
+npm test              # Watch mode for development
+npm run test:run      # CI mode (run once)  
+npm run test:coverage # Generate coverage report
+npm run test:ui       # Visual test runner interface
+```
+
+### TDD Workflow
+1. **Write failing test** → 2. **Implement feature** → 3. **Verify test passes** → 4. **Refactor safely**
+
+**Test Coverage:**
+- ✅ **71 tests** across 5 test suites
+- ✅ **Utility functions** (30 tests) - Data transformations, formatting, validations
+- ✅ **Component logic** (16 tests) - UI interactions, rendering, accessibility  
+- ✅ **Integration testing** (15 tests) - End-to-end workflows with real data
+- ✅ **Type safety** (10 tests) - Interface validation, data integrity
+
+📖 **Complete testing guide:** [TESTING.md](./TESTING.md)
+
 ## 🛠️ Available Scripts
 
+### Development
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm start` - Alias for `npm run dev`
+
+### Testing
+- `npm test` - Run tests in watch mode
+- `npm run test:run` - Run all tests once
+- `npm run test:coverage` - Generate coverage report
+- `npm run test:ui` - Open visual test interface
 
 ## 🏗️ Built With
 
@@ -204,11 +240,35 @@ The application is responsive and works on:
 
 ## 🤝 Contributing
 
+We use **Test-Driven Development** to ensure code quality. Please follow these guidelines:
+
+### Before Making Changes
+1. **Run existing tests**: `npm test`
+2. **Ensure all 71 tests pass**
+3. **Check coverage doesn't decrease**: `npm run test:coverage`
+
+### Adding New Features (TDD Approach)
+1. **Write test first** describing the expected behavior
+2. **Run test** to confirm it fails (red phase)
+3. **Implement feature** to make test pass (green phase)
+4. **Refactor code** while keeping tests green
+5. **Ensure coverage stays above 85%**
+
+### Pull Request Process
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+3. **Write tests for new functionality**
+4. Implement features following TDD workflow
+5. **Verify all tests pass**: `npm run test:run`
+6. Commit your changes: `git commit -m 'Add amazing feature'`
+7. Push to the branch: `git push origin feature/amazing-feature`
+8. Open a Pull Request
+
+### Test Categories to Consider
+- **Unit Tests**: Individual functions and utilities
+- **Component Tests**: UI interactions and rendering  
+- **Integration Tests**: End-to-end user workflows
+- **Data Validation**: Real dataset integrity checks
 
 ## 📝 License
 
