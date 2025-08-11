@@ -66,7 +66,7 @@ export const transformToGraphData = (cmf: UserCMF, companies: Company[], _watchl
     {
       data: {
         id: 'cmf-center',
-        label: 'YOUR CMF',
+        label: cmf.name,
         type: 'cmf' as const,
         cmf: cmf
       },
@@ -190,7 +190,7 @@ export const getCytoscapeStyles = (): any[] => [
       'background-color': '#3B82F6',
       'border-width': 1,
       'border-color': 'white',
-      'label': 'YOUR\nCMF\n\nJohn Smith',
+      'label': 'data(label)',
       'text-valign': 'center',
       'text-halign': 'center',
       'font-size': 6,

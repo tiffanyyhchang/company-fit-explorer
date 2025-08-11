@@ -102,7 +102,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies 
         {/* CMF Info Overlay */}
         <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-2">
-            {userCMF.name}'s CMF
+            {userCMF.name}'s Candidate-Market Fit
           </h2>
           <div className="text-sm text-gray-600">
             <p className="mb-1"><strong>Target Role:</strong> {userCMF.targetRole}</p>

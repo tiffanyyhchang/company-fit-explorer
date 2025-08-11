@@ -2,7 +2,7 @@ import { UserCMF, Company } from '../types';
 
 const sampleUserCMF: UserCMF = {
   id: "pierre-andre-galmes",
-  name: "John-Smith",
+  name: "John Smith",
   mustHaves: [
     "High Velocity of Execution",
     "Growth-Oriented Environment", 
