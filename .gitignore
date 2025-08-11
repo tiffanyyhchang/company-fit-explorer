@@ -53,8 +53,8 @@ coverage/
 *.lcov
 
 # Test outputs
-playwright-report/
-test-results/
+tests/reports/
+tests/results/
 
 # nyc test coverage
 .nyc_output/

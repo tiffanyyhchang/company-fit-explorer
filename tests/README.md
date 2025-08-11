@@ -10,9 +10,11 @@ tests/
 │   └── setup.ts         # Vitest/Jest setup file
 ├── integration/         # Integration tests
 │   └── integration.test.tsx
-└── e2e/                 # End-to-end tests using Playwright
-    ├── basic.spec.ts
-    └── *-snapshots/     # Screenshot test baselines
+├── e2e/                 # End-to-end tests using Playwright
+│   ├── basic.spec.ts
+│   └── *-snapshots/     # Screenshot test baselines
+├── reports/             # Generated test reports (HTML, etc.)
+└── results/             # Test execution artifacts and traces
 ```
 
 ## Test Types
@@ -35,6 +37,9 @@ npm run test:e2e
 
 # All tests
 npm run test:run && npm run test:e2e
+
+# View E2E test results and screenshots
+npx playwright show-report tests/reports
 ```
 
 This structure provides clear separation of concerns and follows modern React TypeScript testing practices.

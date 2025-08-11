@@ -72,7 +72,7 @@ npm run test:ui       # Visual test runner interface
 # E2E Visual Tests  
 npm run test:e2e      # Screenshot-based visual regression tests
 npm run test:e2e:ui   # Interactive E2E test runner  
-npx playwright show-report # View test results and screenshots
+npx playwright show-report tests/reports # View test results and screenshots
 ```
 
 ### TDD Workflow
