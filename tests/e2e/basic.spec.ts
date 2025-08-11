@@ -18,7 +18,7 @@ test.describe('Application Smoke Tests', () => {
     
     // Verify key UI elements are present
     await expect(page.locator('text=Company Details')).toBeVisible();
-    await expect(page.locator('text=All Companies')).toBeVisible();
+    await expect(page.locator('text=Click on a company node to see details')).toBeVisible();
     
     // Basic screenshot to verify visual state
     await expect(page).toHaveScreenshot('app-loaded.png');

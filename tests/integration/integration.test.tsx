@@ -87,8 +87,8 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
         />
       )
 
-      // Should display all companies
-      expect(screen.getByText(`All Companies (${sampleCompanies.length})`)).toBeInTheDocument()
+      // Should display company details header
+      expect(screen.getByText('Company Details')).toBeInTheDocument()
 
       // Should show companies sorted by match score
       const companyElements = screen.getAllByText(/\d+%/)

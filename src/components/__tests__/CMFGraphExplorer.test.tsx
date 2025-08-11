@@ -144,7 +144,7 @@ describe('CMFGraphExplorer', () => {
       render(<CMFGraphExplorer userCMF={mockUserCMF} companies={mockCompanies} />)
 
       // Detail panel should show list view
-      expect(screen.getByText('All Companies (3)')).toBeInTheDocument()
+      expect(screen.getByText('Company Details')).toBeInTheDocument()
       expect(screen.getByText('OpenAI')).toBeInTheDocument()
       expect(screen.getByText('Anthropic')).toBeInTheDocument()
       expect(screen.getByText('Scale AI')).toBeInTheDocument()
@@ -194,7 +194,7 @@ describe('CMFGraphExplorer', () => {
       render(<CMFGraphExplorer userCMF={mockUserCMF} companies={companiesWithoutConnections} />)
 
       expect(screen.getByText('OpenAI')).toBeInTheDocument()
-      expect(screen.getByText('All Companies (1)')).toBeInTheDocument()
+      expect(screen.getByText('Company Details')).toBeInTheDocument()
     })
 
     it('should clear highlighted connections when no company is selected', () => {
@@ -220,7 +220,7 @@ describe('CMFGraphExplorer', () => {
 
       // When a company is selected, hover highlighting should be disabled
       // This logic is handled in the handleCompanyHover function
-      expect(screen.getByText('All Companies (3)')).toBeInTheDocument()
+      expect(screen.getByText('Company Details')).toBeInTheDocument()
     })
   })
 

@@ -35,17 +35,19 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Company Details</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            {viewMode === 'watchlist' ? 'Your Watchlist' : 'Company Details'}
+          </h2>
           <p className="text-sm text-gray-600 mt-1">
-            Click on a company node to see details
+            {viewMode === 'watchlist' 
+              ? 'Companies you\'ve saved for further exploration'
+              : 'Click on a company node to see details'
+            }
           </p>
         </div>
 
         {/* Company List */}
         <div className="flex-1 overflow-auto p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            All Companies ({allCompanies.length})
-          </h3>
           <div className="space-y-3">
             {allCompanies
               .sort((a, b) => b.matchScore - a.matchScore)
@@ -161,40 +163,6 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
         </div>
       </div>
 
-      {/* Watchlist Stats - Show when in watchlist view or when watchlist has items */}
-      {watchlistStats && (viewMode === 'watchlist' || watchlistStats.totalCompanies > 0) && (
-        <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-pink-50">
-          <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-            <svg className="w-4 h-4 mr-2 text-red-500 fill-current" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-            Your Watchlist
-          </h3>
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="text-lg font-bold text-gray-900">{watchlistStats.totalCompanies}</div>
-              <div className="text-gray-600">Total Companies</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-green-600">{watchlistStats.excellentMatches}</div>
-              <div className="text-gray-600">90%+ Matches</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-blue-600">{watchlistStats.totalOpenRoles}</div>
-              <div className="text-gray-600">Open Roles</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-gray-700">
-                {watchlistStats.lastActivity 
-                  ? new Date(watchlistStats.lastActivity).toLocaleDateString()
-                  : 'N/A'
-                }
-              </div>
-              <div className="text-gray-600">Last Updated</div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-6 space-y-6">

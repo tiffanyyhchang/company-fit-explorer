@@ -121,7 +121,7 @@ describe('CompanyDetailPanel', () => {
 
       expect(screen.getByText('Company Details')).toBeInTheDocument()
       expect(screen.getByText('Click on a company node to see details')).toBeInTheDocument()
-      expect(screen.getByText('All Companies (3)')).toBeInTheDocument()
+      expect(screen.getByText('Company Details')).toBeInTheDocument()
       
       // Should show all companies
       expect(screen.getByText('OpenAI')).toBeInTheDocument()
