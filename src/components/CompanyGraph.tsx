@@ -18,6 +18,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
   const onCompanySelectRef = useRef(onCompanySelect);
   const onCompanyHoverRef = useRef(onCompanyHover);
   const selectedCompanyRef = useRef(selectedCompany);
+  const viewStateRef = useRef<{zoom: number; pan: {x: number; y: number}} | null>(null);
 
   // Keep refs updated
   onCompanySelectRef.current = onCompanySelect;
@@ -26,6 +27,15 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
 
   useEffect(() => {
     if (!cyRef.current) return;
+
+    // Save current view state if graph exists
+    if (cyInstance.current) {
+      viewStateRef.current = {
+        zoom: cyInstance.current.zoom(),
+        pan: cyInstance.current.pan()
+      };
+      cyInstance.current.destroy();
+    }
 
     const graphData = transformToGraphData(cmf, companies, watchlistCompanyIds);
     
@@ -66,6 +76,12 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     }
 
     const cy = cyInstance.current;
+
+    // Restore previous view state if it exists
+    if (viewStateRef.current) {
+      cy.zoom(viewStateRef.current.zoom);
+      cy.pan(viewStateRef.current.pan);
+    }
 
     // Company hover events - simple but stable approach
     let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
