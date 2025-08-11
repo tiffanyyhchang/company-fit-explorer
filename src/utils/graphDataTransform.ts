@@ -32,7 +32,7 @@ export const calculatePosition = (company: Company, centerX: number, centerY: nu
   };
 };
 
-export const transformToGraphData = (cmf: UserCMF, companies: Company[], watchlistCompanyIds?: Set<number>): GraphData => {
+export const transformToGraphData = (cmf: UserCMF, companies: Company[], _watchlistCompanyIds?: Set<number>): GraphData => {
   const centerX = 400;
   const centerY = 300;
   

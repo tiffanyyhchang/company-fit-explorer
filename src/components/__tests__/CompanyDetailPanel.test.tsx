@@ -25,7 +25,7 @@ import CompanyDetailPanel from '../CompanyDetailPanel'
  * ❌ State inconsistencies during user interactions
  */
 describe('CompanyDetailPanel', () => {
-  const mockIsInWatchlist = vi.fn((id: number) => false)
+  const mockIsInWatchlist = vi.fn((_id: number) => false)
   const mockOnToggleWatchlist = vi.fn()
   const mockWatchlistStats = {
     totalCompanies: 0,

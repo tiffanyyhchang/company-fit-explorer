@@ -11,7 +11,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
   onCompanySelect,
   onCompanyHover,
   watchlistCompanyIds = new Set(),
-  viewMode = 'explore'
+  viewMode: _viewMode = 'explore'
 }) => {
   const cyRef = useRef<HTMLDivElement>(null);
   const cyInstance = useRef<cytoscape.Core | null>(null);
@@ -54,7 +54,6 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       maxZoom: 5
     });
 
-    const cy = cyInstance.current;
     } catch (error) {
       console.error('Error initializing Cytoscape graph:', error);
       // Create a minimal fallback instance to prevent further errors

@@ -1,5 +1,6 @@
 import React from 'react';
-import { CompanyDetailPanelProps, Company } from '../types';
+import { Company } from '../types';
+import { CompanyDetailPanelProps } from '../types/watchlist';
 
 /**
  * CompanyDetailPanel Component
@@ -28,7 +29,7 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
   isInWatchlist,
   onToggleWatchlist,
   viewMode,
-  watchlistStats
+  watchlistStats: _watchlistStats
 }) => {
   if (!selectedCompany) {
     return (
