@@ -23,6 +23,7 @@ import CMFGraphExplorer from '../CMFGraphExplorer'
  */
 describe('CMFGraphExplorer', () => {
   const mockUserCMF: UserCMF = {
+    id: 'user-1',
     name: 'John Smith',
     targetRole: 'Senior AI Engineer',
     targetCompanies: 'AI/ML companies with strong ethics focus',
@@ -30,7 +31,9 @@ describe('CMFGraphExplorer', () => {
       'Remote-friendly culture',
       'Strong AI safety principles',
       'High technical standards'
-    ]
+    ],
+    wantToHave: ['Competitive salary', 'Stock options'],
+    experience: ['5+ years ML experience', 'Python expertise']
   }
 
   const mockCompanies: Company[] = [

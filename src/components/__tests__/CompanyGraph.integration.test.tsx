@@ -24,10 +24,13 @@ import CompanyGraph from '../CompanyGraph'
  */
 describe('CompanyGraph - Integration & Edge Highlighting Logic', () => {
   const mockUserCMF: UserCMF = {
+    id: 'user-test',
     name: 'Test User',
     targetRole: 'Senior Engineer',
     targetCompanies: 'Tech companies',
-    mustHaves: ['Remote work', 'Good culture']
+    mustHaves: ['Remote work', 'Good culture'],
+    wantToHave: ['Good benefits'],
+    experience: ['React', 'TypeScript']
   }
 
   const mockCompanies: Company[] = [
@@ -203,6 +206,7 @@ describe('CompanyGraph - Integration & Edge Highlighting Logic', () => {
           cmf={mockUserCMF}
           companies={mockCompanies}
           selectedCompany={mockCompanies[0]} // Start with OpenAI
+          hoveredCompany={null}
           onCompanySelect={mockOnCompanySelect}
           onCompanyHover={mockOnCompanyHover}
         />
@@ -312,6 +316,7 @@ describe('CompanyGraph - Integration & Edge Highlighting Logic', () => {
           cmf={mockUserCMF}
           companies={mockCompanies}
           selectedCompany={mockCompanies[0]}
+          hoveredCompany={null}
           onCompanySelect={mockOnCompanySelect}
           onCompanyHover={mockOnCompanyHover}
         />
