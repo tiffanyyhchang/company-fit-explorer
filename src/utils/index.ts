@@ -9,7 +9,7 @@ export const formatCurrency = (amount: number): string => {
  * Capitalizes and formats company type for display
  */
 export const formatCompanyType = (type: string): string => {
-  return type.replace('-', ' ').split(' ')
+  return type.replace(/-/g, ' ').split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
