@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project uses a comprehensive test-driven development (TDD) approach with **71 tests across 5 test suites** to ensure code quality and prevent regressions. Every critical function, component, and user workflow is protected by automated tests.
+This project uses a comprehensive test-driven development (TDD) approach with **97 tests across 7 test suites** to ensure code quality and prevent regressions. Every critical function, component, user workflow, and **visual interaction** is protected by automated tests.
 
 ## Test Setup
 
@@ -54,6 +54,21 @@ Comprehensive testing of the main UI component:
 - **Data Integration**: Real company data handling
 - **Accessibility**: ARIA labels and keyboard navigation
 - **Error Handling**: Logo fallbacks and edge cases
+
+#### CMFGraphExplorer (`src/components/__tests__/CMFGraphExplorer.test.tsx`)
+Main graph container component testing:
+- **State Management**: Company selection and hover coordination
+- **Overlay Components**: CMF info display and legend rendering
+- **Layout Structure**: Responsive design and component positioning
+- **Connection Logic**: Highlighted connections state management
+
+#### CompanyGraph Integration (`src/components/__tests__/CompanyGraph.integration.test.tsx`)
+**🎯 CRITICAL EDGE HIGHLIGHTING TESTS** - Prevents visual interaction regressions:
+- **Graph Initialization**: Proper component setup with edge connection data
+- **Selection State**: Company selection triggering edge highlighting logic  
+- **Hover Callbacks**: Mouse interactions for edge highlighting
+- **Graph Controls**: Zoom/pan functionality affecting edge visibility
+- **Data Integrity**: Connection relationships and edge highlighting accuracy
 
 ### Integration Tests (`src/__tests__/integration.test.tsx`)
 End-to-end testing with real data:
@@ -125,7 +140,8 @@ Coverage excludes:
 
 **Prevents:** Runtime type errors, invalid data, missing required fields
 
-### 4. **Component Logic** (16 tests) 📍 `src/components/__tests__/CompanyDetailPanel.test.tsx`
+### 4. **Component Logic** (42 tests) 
+#### CompanyDetailPanel (16 tests) 📍 `src/components/__tests__/CompanyDetailPanel.test.tsx`
 **What they protect:**
 - ✅ Company rendering (list view, detail view, match scores)
 - ✅ User interactions (clicks, navigation, button functionality)
@@ -134,7 +150,22 @@ Coverage excludes:
 - ✅ Error handling (logo fallbacks, missing data scenarios)
 - ✅ Accessibility compliance (ARIA labels, keyboard navigation)
 
-**Prevents:** Broken user workflows, failed external links, accessibility violations
+#### CMFGraphExplorer (14 tests) 📍 `src/components/__tests__/CMFGraphExplorer.test.tsx`
+**What they protect:**
+- ✅ Graph container state management and overlay rendering
+- ✅ Company selection coordination between graph and panel
+- ✅ Highlighted connections logic and state synchronization
+- ✅ Layout structure and responsive design components
+
+#### **🎯 CompanyGraph Edge Highlighting (12 tests)** 📍 `src/components/__tests__/CompanyGraph.integration.test.tsx`
+**CRITICAL VISUAL INTERACTION PROTECTION:**
+- ✅ **Edge highlighting regression detection** - Core UX feature protection
+- ✅ Company selection triggering visual state changes
+- ✅ Hover interactions and edge connection highlighting  
+- ✅ Graph controls (zoom/pan) affecting edge visibility
+- ✅ Connection data integrity for accurate edge highlighting
+
+**Prevents:** Broken user workflows, failed external links, accessibility violations, **broken edge highlighting**
 
 ### 5. **Integration Testing** (15 tests) 📍 `src/__tests__/integration.test.tsx`
 **What they protect:**
@@ -158,7 +189,7 @@ Output example:
 🧪 Test Documentation Summary
 📁 src/utils/__tests__/index.test.ts - 11 tests
 📁 src/components/__tests__/CompanyDetailPanel.test.tsx - 16 tests  
-🎯 Total Tests: 71 across 5 test files
+🎯 Total Tests: 97 across 7 test files
 ```  
 
 ## Test-Driven Development Workflow

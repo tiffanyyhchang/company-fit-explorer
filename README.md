@@ -1,6 +1,6 @@
 # Company Fit Explorer - Interactive CMF Graph Visualization
 
-[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](./TESTING.md)
+[![Tests](https://img.shields.io/badge/tests-97%20passing-brightgreen)](./TESTING.md)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green)](./TESTING.md#coverage-reports)
 [![TDD](https://img.shields.io/badge/development-TDD-blue)](./TESTING.md#test-driven-development-workflow)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](./.github/workflows/ci.yml)
@@ -59,7 +59,7 @@ npm run dev
 
 ## 🧪 Test-Driven Development
 
-This project uses comprehensive TDD with **71 tests** covering all core functionality, ensuring reliability and preventing regressions.
+This project uses comprehensive TDD with **97 tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions.
 
 ### Quick Test Commands
 ```bash
