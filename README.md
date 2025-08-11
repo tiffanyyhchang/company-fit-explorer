@@ -59,14 +59,19 @@ npm run dev
 
 ## 🧪 Test-Driven Development
 
-This project uses comprehensive TDD with **97 tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
+This project uses comprehensive **multi-layer testing** with **97+ unit tests + E2E visual regression tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
 
 ### Quick Test Commands
 ```bash
+# Unit Tests
 npm test              # Watch mode for development
 npm run test:run      # CI mode (run once)  
 npm run test:coverage # Generate coverage report
 npm run test:ui       # Visual test runner interface
+
+# E2E Visual Tests  
+npm run test:e2e      # Screenshot-based visual regression tests
+npm run test:e2e:ui   # Interactive E2E test runner
 ```
 
 ### TDD Workflow

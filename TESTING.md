@@ -6,15 +6,21 @@
 
 ## Overview
 
-This project uses a comprehensive test-driven development (TDD) approach with **97 tests across 7 test suites** to ensure code quality and prevent regressions. Every critical function, component, user workflow, and **visual interaction** is protected by automated tests.
+This project uses a comprehensive **multi-layer testing approach** with **97+ unit tests plus E2E visual regression tests** to ensure code quality and prevent regressions. Every critical function, component, user workflow, and **visual interaction** is protected by automated tests.
 
 ## Test Setup
 
-### Framework
+### Testing Stack
+**Unit & Integration Testing:**
 - **Vitest**: Modern testing framework with native TypeScript support
 - **React Testing Library**: Component testing utilities
 - **@testing-library/user-event**: User interaction simulation
 - **@testing-library/jest-dom**: Custom Jest matchers for DOM testing
+
+**E2E & Visual Regression Testing:**
+- **Playwright**: Cross-browser end-to-end testing
+- **Visual Screenshots**: Automated screenshot comparison for UI regressions
+- **Real Browser Testing**: Actual Cytoscape.js rendering validation
 
 ### Configuration
 Tests are configured in `vite.config.ts` with:
@@ -80,9 +86,9 @@ End-to-end testing with real data:
 
 ## Running Tests
 
-### Basic Commands
+### Unit & Integration Tests
 ```bash
-# Run all tests
+# Run all unit tests
 npm test
 
 # Run tests once (CI mode)
@@ -96,6 +102,18 @@ npm run test:coverage
 
 # Watch mode
 npm run test:watch
+```
+
+### E2E Visual Regression Tests
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Run E2E with interactive UI
+npm run test:e2e:ui
+
+# Run E2E in headed mode (see browser)
+npm run test:e2e:headed
 ```
 
 ### Coverage Reports
@@ -176,6 +194,17 @@ Coverage excludes:
 - ✅ Cross-component state management and data consistency
 
 **Prevents:** Data corruption, broken external integrations, performance regressions
+
+### 6. **🎯 E2E Visual Regression Testing** (6 tests) 📍 `e2e/edge-highlighting.spec.ts`
+**CRITICAL VISUAL BEHAVIOR PROTECTION** - Tests that detect what unit tests cannot:
+- ✅ **Real Cytoscape.js edge highlighting** in actual browser environments
+- ✅ **Screenshot-based regression detection** for visual changes
+- ✅ **Cross-browser consistency** (Chrome, Firefox, Safari)
+- ✅ **Hover interaction visual validation** with screenshot comparison
+- ✅ **Selection highlighting verification** across different zoom levels
+- ✅ **Connection relationship accuracy** in real rendering context
+
+**Prevents:** Visual regressions invisible to unit tests, Cytoscape.js integration failures, browser-specific issues
 
 ## Quick Test Documentation Generator
 
