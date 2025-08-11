@@ -59,7 +59,7 @@ npm run dev
 
 ## 🧪 Test-Driven Development
 
-This project uses comprehensive TDD with **97 tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions.
+This project uses comprehensive TDD with **97 tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
 
 ### Quick Test Commands
 ```bash
