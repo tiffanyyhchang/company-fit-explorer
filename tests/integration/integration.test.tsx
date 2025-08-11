@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import CompanyDetailPanel from '../components/CompanyDetailPanel'
-import { sampleCompanies } from '../data/companies'
+import CompanyDetailPanel from '../../src/components/CompanyDetailPanel'
+import { sampleCompanies } from '../../src/data/companies'
 
 describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
   const mockOnCompanySelect = vi.fn()
