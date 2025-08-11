@@ -54,7 +54,7 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
     const cy = cyInstance.current;
 
     // Company hover events - simple but stable approach
-    let hoverTimeout: number | null = null;
+    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
     let currentHoveredCompany: any = null;
     let currentHoveredNode: any = null;
     
