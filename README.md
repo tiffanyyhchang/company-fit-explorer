@@ -1,6 +1,6 @@
 # Company Fit Explorer - Interactive CMF Graph Visualization
 
-[![Tests](https://img.shields.io/badge/tests-97%20passing-brightgreen)](./TESTING.md)
+[![Tests](https://img.shields.io/badge/tests-97%20unit%20%2B%206%20e2e%20passing-brightgreen)](./TESTING.md)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green)](./TESTING.md#coverage-reports)
 [![TDD](https://img.shields.io/badge/development-TDD-blue)](./TESTING.md#test-driven-development-workflow)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](./.github/workflows/ci.yml)
@@ -59,7 +59,7 @@ npm run dev
 
 ## 🧪 Test-Driven Development
 
-This project uses comprehensive **multi-layer testing** with **97+ unit tests + E2E visual regression tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
+This project uses comprehensive **multi-layer testing** with **97 unit tests + 6 E2E visual tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
 
 ### Quick Test Commands
 ```bash
@@ -71,7 +71,8 @@ npm run test:ui       # Visual test runner interface
 
 # E2E Visual Tests  
 npm run test:e2e      # Screenshot-based visual regression tests
-npm run test:e2e:ui   # Interactive E2E test runner
+npm run test:e2e:ui   # Interactive E2E test runner  
+npx playwright show-report # View test results and screenshots
 ```
 
 ### TDD Workflow

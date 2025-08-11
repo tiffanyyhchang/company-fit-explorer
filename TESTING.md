@@ -114,6 +114,9 @@ npm run test:e2e:ui
 
 # Run E2E in headed mode (see browser)
 npm run test:e2e:headed
+
+# View E2E test results and screenshots
+npx playwright show-report
 ```
 
 ### Coverage Reports
@@ -195,16 +198,16 @@ Coverage excludes:
 
 **Prevents:** Data corruption, broken external integrations, performance regressions
 
-### 6. **🎯 E2E Visual Regression Testing** (6 tests) 📍 `e2e/edge-highlighting.spec.ts`
+### 6. **🎯 E2E Visual Regression Testing** (6 tests) 📍 `e2e/basic.spec.ts`
 **CRITICAL VISUAL BEHAVIOR PROTECTION** - Tests that detect what unit tests cannot:
-- ✅ **Real Cytoscape.js edge highlighting** in actual browser environments
-- ✅ **Screenshot-based regression detection** for visual changes
-- ✅ **Cross-browser consistency** (Chrome, Firefox, Safari)
-- ✅ **Hover interaction visual validation** with screenshot comparison
-- ✅ **Selection highlighting verification** across different zoom levels
-- ✅ **Connection relationship accuracy** in real rendering context
+- ✅ **Real browser application loading** across Chrome, Firefox, Safari
+- ✅ **Screenshot-based regression detection** for UI changes
+- ✅ **Cross-browser consistency** validation
+- ✅ **Interactive element verification** (clickable companies)
+- ✅ **Visual state capture** with baseline comparison
+- ✅ **Application smoke testing** ensuring core functionality works
 
-**Prevents:** Visual regressions invisible to unit tests, Cytoscape.js integration failures, browser-specific issues
+**Prevents:** Visual regressions invisible to unit tests, browser-specific issues, application loading failures
 
 ## Quick Test Documentation Generator
 
@@ -218,7 +221,7 @@ Output example:
 🧪 Test Documentation Summary
 📁 src/utils/__tests__/index.test.ts - 11 tests
 📁 src/components/__tests__/CompanyDetailPanel.test.tsx - 16 tests  
-🎯 Total Tests: 97 across 7 test files
+🎯 Total Tests: 97 unit tests + 6 E2E tests across 8 test files
 ```  
 
 ## Test-Driven Development Workflow
