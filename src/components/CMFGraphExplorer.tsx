@@ -1,39 +1,17 @@
-import React, { useState } from 'react';
-import { CMFGraphExplorerProps, Company } from '../types';
+import React from 'react';
+import { CMFGraphExplorerProps } from '../types';
+import { useCompanySelection } from '../hooks/useCompanySelection';
 import CompanyGraph from './CompanyGraph';
 import CompanyDetailPanel from './CompanyDetailPanel';
 
 const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies }) => {
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [hoveredCompany, setHoveredCompany] = useState<Company | null>(null);
-  const [, setHighlightedConnections] = useState<Set<number>>(new Set());
-
-  const handleCompanySelect = (company: Company | null) => {
-    setSelectedCompany(company);
-    
-    // Update highlighted connections
-    if (company) {
-      setHighlightedConnections(new Set(company.connections));
-    } else {
-      setHighlightedConnections(new Set());
-    }
-  };
-
-  const handleCompanyHover = (company: Company | null) => {
-    setHoveredCompany(company);
-    
-    // Optionally highlight connections on hover
-    if (company && !selectedCompany) {
-      setHighlightedConnections(new Set(company.connections));
-    } else if (!company && !selectedCompany) {
-      setHighlightedConnections(new Set());
-    }
-  };
-
-  const handleCompanySelectFromPanel = (company: Company) => {
-    setSelectedCompany(company);
-    setHighlightedConnections(new Set(company.connections));
-  };
+  const {
+    selectedCompany,
+    hoveredCompany,
+    handleCompanySelect,
+    handleCompanyHover,
+    handleCompanySelectFromPanel,
+  } = useCompanySelection();
 
   return (
     <div className="flex h-screen bg-gray-50">

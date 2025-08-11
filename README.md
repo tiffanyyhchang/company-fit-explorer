@@ -7,7 +7,7 @@
 
 An interactive CMF (Candidate Market Fit) visualization tool that helps you discover companies that align with your career goals and preferences. Companies are positioned around your CMF profile based on match scores, with visual indicators for connection strength and match quality.
 
-![Company Graph Explorer](./company-fit-explorer-ui.jpg)
+![Company Graph Explorer](./assets/images/company-fit-explorer-ui.jpg)
 
 ## ✨ Features
 
