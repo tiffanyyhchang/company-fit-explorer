@@ -24,7 +24,11 @@ import { CompanyDetailPanelProps, Company } from '../types';
 const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
   selectedCompany,
   allCompanies,
-  onCompanySelect
+  onCompanySelect,
+  isInWatchlist,
+  onToggleWatchlist,
+  viewMode,
+  watchlistStats
 }) => {
   if (!selectedCompany) {
     return (
@@ -52,14 +56,23 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
                 onClick={() => onCompanySelect(company)}
               >
                 <div className="flex items-center space-x-3">
-                  <img
-                    src={company.logo}
-                    alt={`${company.name} logo`}
-                    className="w-8 h-8 rounded"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/api/placeholder/32/32';
-                    }}
-                  />
+                  <div className="relative">
+                    <img
+                      src={company.logo}
+                      alt={`${company.name} logo`}
+                      className="w-8 h-8 rounded"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/api/placeholder/32/32';
+                      }}
+                    />
+                    {isInWatchlist && isInWatchlist(company.id) && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center shadow-sm border border-white">
+                        <svg className="w-1.5 h-1.5 text-white fill-current" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-900">
                       {company.name}
@@ -148,6 +161,41 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
         </div>
       </div>
 
+      {/* Watchlist Stats - Show when in watchlist view or when watchlist has items */}
+      {watchlistStats && (viewMode === 'watchlist' || watchlistStats.totalCompanies > 0) && (
+        <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-pink-50">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <svg className="w-4 h-4 mr-2 text-red-500 fill-current" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            Your Watchlist
+          </h3>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div className="text-center">
+              <div className="text-lg font-bold text-gray-900">{watchlistStats.totalCompanies}</div>
+              <div className="text-gray-600">Total Companies</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-green-600">{watchlistStats.excellentMatches}</div>
+              <div className="text-gray-600">90%+ Matches</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-blue-600">{watchlistStats.totalOpenRoles}</div>
+              <div className="text-gray-600">Open Roles</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-gray-700">
+                {watchlistStats.lastActivity 
+                  ? new Date(watchlistStats.lastActivity).toLocaleDateString()
+                  : 'N/A'
+                }
+              </div>
+              <div className="text-gray-600">Last Updated</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       <div className="flex-1 overflow-auto p-6 space-y-6">
         {/* Company Info */}
@@ -208,14 +256,23 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
                   onClick={() => onCompanySelect(company)}
                 >
                   <div className="flex items-center space-x-3">
-                    <img
-                      src={company.logo}
-                      alt={`${company.name} logo`}
-                      className="w-6 h-6 rounded"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/api/placeholder/24/24';
-                      }}
-                    />
+                    <div className="relative">
+                      <img
+                        src={company.logo}
+                        alt={`${company.name} logo`}
+                        className="w-6 h-6 rounded"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/api/placeholder/24/24';
+                        }}
+                      />
+                      {isInWatchlist && isInWatchlist(company.id) && (
+                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full flex items-center justify-center shadow-sm border border-white">
+                          <svg className="w-1 h-1 text-white fill-current" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <div>
                       <h4 className="text-sm font-medium text-gray-900">
                         {company.name}
@@ -245,8 +302,32 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
           >
             View Jobs at {selectedCompany.name}
           </button>
-          <button className="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
-            Save Company
+          <button 
+            className={`w-full py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2 ${
+              isInWatchlist && isInWatchlist(selectedCompany.id)
+                ? 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+            }`}
+            onClick={() => onToggleWatchlist && onToggleWatchlist(selectedCompany.id)}
+          >
+            <svg 
+              className={`w-5 h-5 ${
+                isInWatchlist && isInWatchlist(selectedCompany.id)
+                  ? 'fill-current'
+                  : 'fill-none stroke-current'
+              }`}
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={isInWatchlist && isInWatchlist(selectedCompany.id) ? 0 : 2}
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            <span>
+              {isInWatchlist && isInWatchlist(selectedCompany.id) ? 'Remove from Watchlist' : 'Save to Watchlist'}
+            </span>
           </button>
           <button className="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
             Learn More

@@ -62,10 +62,19 @@ export interface CompanyGraphProps {
   hoveredCompany: Company | null;
   onCompanySelect: (company: Company | null) => void;
   onCompanyHover: (company: Company | null) => void;
+  watchlistCompanyIds?: Set<number>;
+  viewMode?: import('./watchlist').ViewMode;
 }
 
 export interface CompanyDetailPanelProps {
   selectedCompany: Company | null;
   allCompanies: Company[];
   onCompanySelect: (company: Company) => void;
+  isInWatchlist?: (companyId: number) => boolean;
+  onToggleWatchlist?: (companyId: number) => void;
+  viewMode?: import('./watchlist').ViewMode;
+  watchlistStats?: import('./watchlist').WatchlistStats;
 }
+
+// Export watchlist types
+export * from './watchlist';

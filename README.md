@@ -29,6 +29,14 @@ An interactive CMF (Candidate Market Fit) visualization tool that helps you disc
   - 2-letter abbreviations inside company circles
   - Company names and match percentages displayed below nodes
   - Smooth hover effects and connection highlighting
+- **Watchlist Feature**: Save companies you're interested in and track them:
+  - **Save Companies**: Click "Save to Watchlist" button with heart icon
+  - **View Mode Toggle**: Switch between "Explore Companies" (15) and "Watchlist" (X) views
+  - **Heart Indicators**: Subtle heart badges on company logos in the sidebar
+  - **Persistent Storage**: Watchlist data saved locally across browser sessions
+  - **Statistics Dashboard**: Track total companies, 90%+ matches, and open roles
+  - **Empty States**: Elegant prompts when watchlist is empty
+  - **Cross-tab Sync**: Real-time updates when watchlist changes in other tabs
 
 ## 🚀 Quick Start
 
@@ -41,7 +49,7 @@ An interactive CMF (Candidate Market Fit) visualization tool that helps you disc
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/company-fit-explorer.git
+git clone <your-repository-url>
 cd company-fit-explorer
 ```
 
@@ -59,7 +67,7 @@ npm run dev
 
 ## 🧪 Test-Driven Development
 
-This project uses comprehensive **multi-layer testing** with **97 unit tests + 6 E2E visual tests** covering all core functionality including **edge highlighting regression protection**, ensuring reliability and preventing regressions across visual interactions.
+This project uses comprehensive **multi-layer testing** with **97 unit tests + 6 E2E visual tests** covering all core functionality including **edge highlighting regression protection** and **watchlist functionality**, ensuring reliability and preventing regressions across visual interactions.
 
 ### Quick Test Commands
 ```bash
@@ -79,10 +87,11 @@ npx playwright show-report tests/reports # View test results and screenshots
 1. **Write failing test** → 2. **Implement feature** → 3. **Verify test passes** → 4. **Refactor safely**
 
 **Test Coverage:**
-- ✅ **71 tests** across 5 test suites
+- ✅ **83 tests** across 7 test files
 - ✅ **Utility functions** (30 tests) - Data transformations, formatting, validations
 - ✅ **Component logic** (16 tests) - UI interactions, rendering, accessibility  
 - ✅ **Integration testing** (15 tests) - End-to-end workflows with real data
+- ✅ **Watchlist functionality** (12 tests) - Storage, state management, error handling
 - ✅ **Type safety** (10 tests) - Interface validation, data integrity
 
 📖 **Complete testing guide:** [TESTING.md](./TESTING.md)
@@ -100,14 +109,21 @@ npx playwright show-report tests/reports # View test results and screenshots
 - `npm run test:run` - Run all tests once
 - `npm run test:coverage` - Generate coverage report
 - `npm run test:ui` - Open visual test interface
+- `npm run test:e2e` - Run E2E visual regression tests
+- `npm run test:e2e:ui` - Interactive E2E test runner
+- `npm run test:e2e:headed` - Run E2E tests in headed browser mode
+- `npm run docs:tests` - Generate test documentation
 
 ## 🏗️ Built With
 
-- **React 18** - Frontend framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Styling
-- **Cytoscape.js** - Graph visualization library
+- **React 18.2** - Frontend framework
+- **TypeScript 5.2** - Type safety and development tooling
+- **Vite 5.0** - Build tool and dev server
+- **Tailwind CSS 3.3** - Utility-first CSS framework
+- **Cytoscape.js 3.26** - Graph visualization library
+- **Vitest 3.2** - Unit testing framework
+- **Playwright 1.54** - E2E testing and visual regression
+- **Testing Library** - React component testing utilities
 
 ## 📁 Project Structure
 
@@ -117,14 +133,25 @@ src/
 │   ├── CMFGraphExplorer.tsx         # Main CMF graph explorer component
 │   ├── CompanyGraph.tsx             # Cytoscape graph visualization
 │   ├── CompanyDetailPanel.tsx       # Company details sidebar
+│   ├── __tests__/                   # Component tests
 │   └── index.ts                     # Component exports
 ├── data/                # Static data and configuration
 │   └── companies.ts                 # CMF profile and company dataset
+├── hooks/               # Custom React hooks
+│   ├── useCompanySelection.ts       # Company selection state hook
+│   ├── useWatchlist.ts              # Watchlist state management hook
+│   └── index.ts                     # Hook exports
+├── styles/              # Styling and CSS
+│   └── index.css                    # Global styles and Tailwind imports
 ├── types/               # TypeScript type definitions
-│   └── index.ts                     # CMF, Company, and graph type definitions
+│   ├── index.ts                     # CMF, Company, and graph type definitions
+│   ├── watchlist.ts                 # Watchlist interfaces and types
+│   └── __tests__/                   # Type validation tests
 ├── utils/               # Utility functions and configurations
 │   ├── graphDataTransform.ts        # Graph positioning and styling logic
-│   └── index.ts                     # Helper functions
+│   ├── watchlistStorage.ts          # localStorage utilities with error handling
+│   ├── index.ts                     # Helper functions
+│   └── __tests__/                   # Utility function tests
 ├── App.tsx              # Root application component
 └── main.tsx             # Application entry point
 ```
@@ -148,6 +175,7 @@ interface Company {
   id: number;
   name: string;
   logo: string;               // Company logo URL
+  careerUrl: string;          // Careers page URL for applications
   matchScore: number;         // CMF match percentage (0-100)
   industry: string;           // Company industry
   stage: string;              // Funding/company stage
@@ -161,6 +189,13 @@ interface Company {
   color: string;              // Node color based on match quality
   angle?: number;             // Position angle around CMF center
   distance?: number;          // Distance from center based on match score
+}
+
+interface WatchlistData {
+  userId?: string;            // Optional user identifier for multi-user support
+  companyIds: number[];       // Array of saved company IDs
+  lastUpdated: string;        // ISO timestamp of last modification
+  version: number;            // Data format version for migrations
 }
 ```
 
@@ -197,6 +232,7 @@ Add companies to the `sampleCompanies` array in `src/data/companies.ts`:
   id: 16,
   name: "New Company",
   logo: "https://logo.clearbit.com/company.com",
+  careerUrl: "https://company.com/careers",
   matchScore: 85,
   industry: "Industry",
   stage: "Company Stage", 
@@ -222,11 +258,29 @@ Match scores can be enhanced to be dynamic based on:
 - Role level and compensation expectations
 - Industry and technical focus areas
 
+### Using the Watchlist Feature
+
+**Save Companies to Your Watchlist:**
+- Click any company node to view details in the sidebar
+- Click "Save to Watchlist" button with the heart icon
+- The button color changes to red when a company is saved
+
+**Switch Between Views:**
+- Use the toggle buttons at the top: "Explore Companies (15)" or "Watchlist (X)"
+- Explore mode shows all companies in the dataset
+- Watchlist mode filters to show only your saved companies
+
+**Track Your Progress:**
+- View watchlist statistics in the sidebar (total companies, excellent matches, open roles)
+- Heart indicators appear on company logos in the sidebar for saved companies
+- Data persists across browser sessions using localStorage
+
 ### Styling Customization
 
 The application uses Tailwind CSS. Key styling areas:
-- `src/index.css` - Global styles
-- Component classes in the TSX file for layout and colors
+- `src/styles/index.css` - Global styles and Tailwind imports
+- Component classes in the TSX files for layout and colors
+- Cytoscape styles in `src/utils/graphDataTransform.ts` for graph visualization
 
 ## 🔄 Company Connections
 
@@ -250,8 +304,9 @@ We use **Test-Driven Development** to ensure code quality. Please follow these g
 
 ### Before Making Changes
 1. **Run existing tests**: `npm test`
-2. **Ensure all 71 tests pass**
+2. **Ensure all tests pass** (currently 83 unit tests across 7 files)
 3. **Check coverage doesn't decrease**: `npm run test:coverage`
+4. **Run E2E tests**: `npm run test:e2e` (may need visual baseline updates)
 
 ### Adding New Features (TDD Approach)
 1. **Write test first** describing the expected behavior
@@ -291,7 +346,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you have questions or need help:
-1. Check the [Issues](https://github.com/yourusername/company-fit-explorer/issues) page
+1. Check the Issues page on your repository
 2. Create a new issue if your question isn't already addressed
 3. Provide as much detail as possible for faster resolution
 

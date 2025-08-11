@@ -25,6 +25,15 @@ import CompanyDetailPanel from '../CompanyDetailPanel'
  * ❌ State inconsistencies during user interactions
  */
 describe('CompanyDetailPanel', () => {
+  const mockIsInWatchlist = vi.fn((id: number) => false)
+  const mockOnToggleWatchlist = vi.fn()
+  const mockWatchlistStats = {
+    totalCompanies: 0,
+    excellentMatches: 0,
+    totalOpenRoles: 0,
+    lastActivity: null
+  }
+
   const mockCompanies: Company[] = [
     {
       id: 1,
@@ -89,17 +98,26 @@ describe('CompanyDetailPanel', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsInWatchlist.mockReturnValue(false)
   })
+
+  const renderCompanyDetailPanel = (props: Partial<React.ComponentProps<typeof CompanyDetailPanel>> = {}) => {
+    const defaultProps = {
+      selectedCompany: null,
+      allCompanies: mockCompanies,
+      onCompanySelect: mockOnCompanySelect,
+      isInWatchlist: mockIsInWatchlist,
+      onToggleWatchlist: mockOnToggleWatchlist,
+      viewMode: 'explore' as const,
+      watchlistStats: mockWatchlistStats
+    }
+    
+    return render(<CompanyDetailPanel {...defaultProps} {...props} />)
+  }
 
   describe('when no company is selected', () => {
     it('should display company list with all companies', () => {
-      render(
-        <CompanyDetailPanel
-          selectedCompany={null}
-          allCompanies={mockCompanies}
-          onCompanySelect={mockOnCompanySelect}
-        />
-      )
+      renderCompanyDetailPanel()
 
       expect(screen.getByText('Company Details')).toBeInTheDocument()
       expect(screen.getByText('Click on a company node to see details')).toBeInTheDocument()
@@ -112,13 +130,7 @@ describe('CompanyDetailPanel', () => {
     })
 
     it('should sort companies by match score in descending order', () => {
-      render(
-        <CompanyDetailPanel
-          selectedCompany={null}
-          allCompanies={mockCompanies}
-          onCompanySelect={mockOnCompanySelect}
-        />
-      )
+      renderCompanyDetailPanel()
 
       const companyElements = screen.getAllByText(/95%|94%|87%/)
       expect(companyElements[0]).toHaveTextContent('95%') // OpenAI
@@ -132,6 +144,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={null}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -147,6 +163,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={null}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -166,6 +186,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -181,6 +205,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -197,6 +225,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -211,6 +243,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -226,6 +262,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={companyWithoutConnections}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -244,6 +284,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -260,10 +304,14 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
-      expect(screen.getByText('Save Company')).toBeInTheDocument()
+      expect(screen.getByText('Save to Watchlist')).toBeInTheDocument()
       expect(screen.getByText('Learn More')).toBeInTheDocument()
     })
 
@@ -273,6 +321,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -288,6 +340,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={selectedCompany}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -305,6 +361,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={mockCompanies[0]}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -324,6 +384,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={mockCompanies[0]}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -345,6 +409,10 @@ describe('CompanyDetailPanel', () => {
           selectedCompany={null}
           allCompanies={mockCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 

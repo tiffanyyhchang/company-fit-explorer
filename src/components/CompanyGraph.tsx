@@ -9,7 +9,9 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
   selectedCompany,
   // hoveredCompany,
   onCompanySelect,
-  onCompanyHover
+  onCompanyHover,
+  watchlistCompanyIds = new Set(),
+  viewMode = 'explore'
 }) => {
   const cyRef = useRef<HTMLDivElement>(null);
   const cyInstance = useRef<cytoscape.Core | null>(null);
@@ -25,11 +27,12 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
   useEffect(() => {
     if (!cyRef.current) return;
 
-    const graphData = transformToGraphData(cmf, companies);
+    const graphData = transformToGraphData(cmf, companies, watchlistCompanyIds);
     
-    cyInstance.current = cytoscape({
-      container: cyRef.current,
-      elements: [...graphData.nodes, ...graphData.edges],
+    try {
+      cyInstance.current = cytoscape({
+        container: cyRef.current,
+        elements: [...graphData.nodes, ...graphData.edges],
       style: [
         ...getCytoscapeStyles(),
         {
@@ -50,6 +53,18 @@ const CompanyGraph: React.FC<CompanyGraphProps> = ({
       minZoom: 0.5,
       maxZoom: 5
     });
+
+    const cy = cyInstance.current;
+    } catch (error) {
+      console.error('Error initializing Cytoscape graph:', error);
+      // Create a minimal fallback instance to prevent further errors
+      cyInstance.current = cytoscape({
+        container: cyRef.current,
+        elements: [],
+        style: getCytoscapeStyles(),
+      });
+      return; // Skip event handlers if graph failed to initialize properly
+    }
 
     const cy = cyInstance.current;
 

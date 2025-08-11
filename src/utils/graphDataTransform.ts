@@ -32,7 +32,7 @@ export const calculatePosition = (company: Company, centerX: number, centerY: nu
   };
 };
 
-export const transformToGraphData = (cmf: UserCMF, companies: Company[]): GraphData => {
+export const transformToGraphData = (cmf: UserCMF, companies: Company[], watchlistCompanyIds?: Set<number>): GraphData => {
   const centerX = 400;
   const centerY = 300;
   
@@ -85,6 +85,7 @@ export const transformToGraphData = (cmf: UserCMF, companies: Company[]): GraphD
     // Company name labels - positioned below each company
     ...companies.map(company => {
       const pos = calculatePosition(company, centerX, centerY, 1);
+      
       return {
         data: {
           id: `name-label-${company.id}`,
@@ -110,15 +111,21 @@ export const transformToGraphData = (cmf: UserCMF, companies: Company[]): GraphD
     })
   ];
 
+  // Create a Set of available company IDs for efficient lookup
+  const availableCompanyIds = new Set(companies.map(c => c.id));
+  
   const edges = companies.flatMap(company =>
-    company.connections.map(connectionId => ({
-      data: {
-        id: `edge-${company.id}-${connectionId}`,
-        source: `company-${company.id}`,
-        target: `company-${connectionId}`,
-        relationship: company.connectionTypes[connectionId]
-      }
-    }))
+    company.connections
+      // Only create edges to companies that exist in the current dataset
+      .filter(connectionId => availableCompanyIds.has(connectionId))
+      .map(connectionId => ({
+        data: {
+          id: `edge-${company.id}-${connectionId}`,
+          source: `company-${company.id}`,
+          target: `company-${connectionId}`,
+          relationship: company.connectionTypes[connectionId]
+        }
+      }))
   );
 
   return { nodes, edges };
@@ -182,9 +189,7 @@ export const getCytoscapeStyles = (): any[] => [
       'height': 60,
       'background-color': '#3B82F6',
       'border-width': 1,
-      //'border-color': '#1F2937',
-       'border-color': 'white',
-      // 'border-color': 'transparent',
+      'border-color': 'white',
       'label': 'YOUR\nCMF\n\nJohn Smith',
       'text-valign': 'center',
       'text-halign': 'center',
@@ -230,7 +235,7 @@ export const getCytoscapeStyles = (): any[] => [
       'text-valign': 'center',
       'text-halign': 'center',
       'font-size': 4.5,
-      'font-weight': 450, // Lighter weight for percentage
+      'font-weight': 'normal', // Standard weight for percentage
       'color': '#6B7280', // Lighter gray color for percentage
       'text-wrap': 'wrap',
       'text-max-width': '55px',
@@ -296,27 +301,6 @@ export const getCytoscapeStyles = (): any[] => [
       'transition-timing-function': 'ease-out'
     }
   },
-  // Active (non-dimmed) company nodes should appear on top
-  {
-    selector: 'node[type="company"]:not(.dimmed)',
-    style: {
-      'z-index': 10
-    }
-  },
-  // Active (non-dimmed) name label nodes should appear on top  
-  {
-    selector: 'node[type="company-name-label"]:not(.dimmed)',
-    style: {
-      'z-index': 10
-    }
-  },
-  // Active (non-dimmed) percentage label nodes should appear on top  
-  {
-    selector: 'node[type="company-percent-label"]:not(.dimmed)',
-    style: {
-      'z-index': 10
-    }
-  },
   // Ensure zone nodes maintain their background z-index regardless of other rules
   {
     selector: 'node[type="zone-excellent"], node[type="zone-good"], node[type="zone-fair"]',
@@ -373,5 +357,5 @@ export const getCytoscapeStyles = (): any[] => [
       'transition-duration': '0.25s',
       'transition-timing-function': 'ease-out'
     }
-  }
+  },
 ];

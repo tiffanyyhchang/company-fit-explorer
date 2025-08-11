@@ -1,6 +1,33 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
+// Mock localStorage for testing
+const localStorageMock = {
+  getItem: vi.fn(() => null),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+  length: 0,
+  key: vi.fn(() => null),
+}
+Object.defineProperty(window, 'localStorage', {
+  writable: true,
+  value: localStorageMock,
+})
+
+// Mock custom storage events to prevent issues in tests
+const originalAddEventListener = window.addEventListener;
+window.addEventListener = vi.fn((event, handler, options) => {
+  if (event === 'watchlist-storage-change' || event === 'storage') {
+    // Don't actually add storage listeners that could cause issues in tests
+    return
+  }
+  // Call original implementation for other events if it exists
+  if (originalAddEventListener) {
+    return originalAddEventListener.call(window, event, handler, options)
+  }
+})
+
 // Mock window.open for testing
 Object.defineProperty(window, 'open', {
   writable: true,

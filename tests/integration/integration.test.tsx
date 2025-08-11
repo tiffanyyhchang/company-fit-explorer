@@ -6,9 +6,18 @@ import { sampleCompanies } from '../../src/data/companies'
 
 describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
   const mockOnCompanySelect = vi.fn()
+  const mockIsInWatchlist = vi.fn(() => false)
+  const mockOnToggleWatchlist = vi.fn()
+  const mockWatchlistStats = {
+    totalCompanies: 0,
+    excellentMatches: 0,
+    totalOpenRoles: 0,
+    lastActivity: null
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsInWatchlist.mockReturnValue(false)
   })
 
   describe('Real Data Validation', () => {
@@ -71,6 +80,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={null}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -101,6 +114,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={null}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -122,6 +139,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={testCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -145,7 +166,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
 
       // Action buttons
       expect(screen.getByText(`View Jobs at ${testCompany.name}`)).toBeInTheDocument()
-      expect(screen.getByText('Save Company')).toBeInTheDocument()
+      expect(screen.getByText('Save to Watchlist')).toBeInTheDocument()
       expect(screen.getByText('Learn More')).toBeInTheDocument()
     })
 
@@ -164,6 +185,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={testCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -186,6 +211,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={connectedCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -215,6 +244,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={connectedCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -279,6 +312,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={null}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
       
@@ -295,6 +332,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
             selectedCompany={isolatedCompany}
             allCompanies={sampleCompanies}
             onCompanySelect={mockOnCompanySelect}
+            isInWatchlist={mockIsInWatchlist}
+            onToggleWatchlist={mockOnToggleWatchlist}
+            viewMode="explore"
+            watchlistStats={mockWatchlistStats}
           />
         )
 
@@ -314,6 +355,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={testCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
@@ -326,6 +371,10 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           selectedCompany={testCompany}
           allCompanies={sampleCompanies}
           onCompanySelect={mockOnCompanySelect}
+          isInWatchlist={mockIsInWatchlist}
+          onToggleWatchlist={mockOnToggleWatchlist}
+          viewMode="explore"
+          watchlistStats={mockWatchlistStats}
         />
       )
 
