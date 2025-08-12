@@ -27,6 +27,7 @@ import CompanyDetailPanel from '../CompanyDetailPanel'
 describe('CompanyDetailPanel', () => {
   const mockIsInWatchlist = vi.fn((_id: number) => false)
   const mockOnToggleWatchlist = vi.fn()
+  const mockOnRequestDelete = vi.fn()
   const mockWatchlistStats = {
     totalCompanies: 0,
     excellentMatches: 0,
@@ -108,6 +109,7 @@ describe('CompanyDetailPanel', () => {
       onCompanySelect: mockOnCompanySelect,
       isInWatchlist: mockIsInWatchlist,
       onToggleWatchlist: mockOnToggleWatchlist,
+      onRequestDelete: mockOnRequestDelete,
       viewMode: 'explore' as const,
       watchlistStats: mockWatchlistStats
     }
@@ -146,6 +148,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -165,6 +168,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -188,6 +192,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -207,6 +212,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -227,6 +233,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -245,6 +252,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -264,6 +272,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -286,6 +295,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -306,6 +316,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -323,6 +334,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -342,6 +354,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -363,6 +376,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -386,6 +400,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -411,6 +426,7 @@ describe('CompanyDetailPanel', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />

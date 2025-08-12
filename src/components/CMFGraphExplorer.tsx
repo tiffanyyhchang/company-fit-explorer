@@ -6,8 +6,12 @@ import CompanyGraph from './CompanyGraph';
 import CompanyDetailPanel from './CompanyDetailPanel';
 import AddCompanyModal from './AddCompanyModal';
 import LLMSettingsModal from './LLMSettingsModal';
+import { RemoveCompanyModal } from './RemoveCompanyModal';
 import { loadCustomCompanies, addCustomCompany, setupCrossTabSync } from '../utils/companyStateManager';
 import { llmService } from '../utils/llm/service';
+import { loadRemovedCompaniesFromStorage, saveRemovedCompaniesToStorage } from '../utils/removedCompaniesStorage';
+import { loadPanelState, savePanelState } from '../utils/panelStorage';
+import CollapsibleCMFPanel from './CollapsibleCMFPanel';
 
 const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies: initialCompanies }) => {
   // View mode state
@@ -24,6 +28,14 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
   const [companies, setCompanies] = useState<Company[]>(initialCompanies);
   const [customCompanies, setCustomCompanies] = useState<Company[]>([]);
   const [_isLoadingCustomCompanies, setIsLoadingCustomCompanies] = useState(true);
+  
+  // Removed companies state
+  const [removedCompanyIds, setRemovedCompanyIds] = useState<Set<number>>(new Set());
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [companyToRemove, setCompanyToRemove] = useState<Company | null>(null);
+  
+  // CMF Panel collapse state
+  const [isCMFPanelCollapsed, setIsCMFPanelCollapsed] = useState<boolean>(false);
   
   // Company selection state
   const {
@@ -51,13 +63,18 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
     }
   });
 
+  // Filter available companies (excluding removed ones)
+  const availableCompanies = useMemo(() => {
+    return companies.filter(company => !removedCompanyIds.has(company.id));
+  }, [companies, removedCompanyIds]);
+
   // Filter companies based on view mode
   const displayedCompanies = useMemo(() => {
     if (viewMode === 'watchlist') {
-      return watchlistCompanies;
+      return watchlistCompanies.filter(company => !removedCompanyIds.has(company.id));
     }
-    return companies;
-  }, [companies, watchlistCompanies, viewMode]);
+    return availableCompanies;
+  }, [availableCompanies, watchlistCompanies, viewMode, removedCompanyIds]);
 
   // Handle adding new company with persistence
   const handleAddCompany = useCallback(async (newCompany: Company) => {
@@ -97,6 +114,73 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
     setLLMConfigured(llmService.isConfigured());
   }, []);
 
+  // Check if a company can be restored from removed companies
+  const checkForRemovedCompany = useCallback((companyName: string): Company | null => {
+    const removedCompany = companies.find(c => 
+      c.name.toLowerCase() === companyName.toLowerCase() && 
+      removedCompanyIds.has(c.id)
+    );
+    return removedCompany || null;
+  }, [companies, removedCompanyIds]);
+
+  // Restore a company from the removed list
+  const restoreRemovedCompany = useCallback((company: Company) => {
+    setRemovedCompanyIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(company.id);
+      saveRemovedCompaniesToStorage(newSet);
+      return newSet;
+    });
+    
+    // Auto-select the restored company
+    setTimeout(() => {
+      handleCompanySelect(company);
+    }, 1000);
+    
+    console.log('Company restored successfully:', company.name);
+  }, [handleCompanySelect]);
+
+  // Remove company functionality
+  const removeCompany = useCallback((companyId: number) => {
+    setRemovedCompanyIds(prev => {
+      const newSet = new Set(prev);
+      newSet.add(companyId);
+      saveRemovedCompaniesToStorage(newSet);
+      return newSet;
+    });
+    
+    // Auto-remove from watchlist if present
+    if (isInWatchlist(companyId)) {
+      toggleWatchlist(companyId);
+    }
+    
+    // Close company detail panel if the removed company was selected
+    if (selectedCompany?.id === companyId) {
+      handleCompanySelect(null);
+    }
+    
+    // Close confirmation modal
+    setShowRemoveConfirmation(false);
+    setCompanyToRemove(null);
+  }, [selectedCompany, handleCompanySelect, isInWatchlist, toggleWatchlist]);
+
+  // Handle remove request from detail panel
+  const handleRemoveRequest = useCallback((company: Company) => {
+    setCompanyToRemove(company);
+    setShowRemoveConfirmation(true);
+  }, []);
+
+  const handleRemoveConfirm = useCallback(() => {
+    if (companyToRemove) {
+      removeCompany(companyToRemove.id);
+    }
+  }, [companyToRemove, removeCompany]);
+
+  const handleRemoveCancel = useCallback(() => {
+    setShowRemoveConfirmation(false);
+    setCompanyToRemove(null);
+  }, []);
+
   // Clean up duplicates function
   const cleanupDuplicates = useCallback(() => {
     setCompanies(prev => {
@@ -120,6 +204,25 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
   useEffect(() => {
     cleanupDuplicates();
   }, [cleanupDuplicates]);
+
+  // Load removed companies on mount
+  useEffect(() => {
+    const savedRemovedCompanies = loadRemovedCompaniesFromStorage();
+    setRemovedCompanyIds(savedRemovedCompanies);
+  }, []);
+
+  // Load CMF panel collapse state on mount
+  useEffect(() => {
+    const panelState = loadPanelState();
+    setIsCMFPanelCollapsed(panelState.cmfCollapsed);
+  }, []);
+
+  // Toggle CMF panel collapse state
+  const toggleCMFPanel = useCallback(() => {
+    const newState = !isCMFPanelCollapsed;
+    setIsCMFPanelCollapsed(newState);
+    savePanelState({ cmfCollapsed: newState });
+  }, [isCMFPanelCollapsed]);
 
   // Handle view mode toggle
   const handleViewModeChange = (newMode: ViewMode) => {
@@ -205,7 +308,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span>Explore Companies ({companies.length})</span>
+              <span>Explore Companies ({availableCompanies.length})</span>
             </button>
             <button
               onClick={() => handleViewModeChange('watchlist')}
@@ -262,24 +365,12 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
           viewMode={viewMode}
         />
         
-        {/* CMF Info Overlay */}
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">
-            {userCMF.name}'s Candidate-Market Fit
-          </h2>
-          <div className="text-sm text-gray-600">
-            <p className="mb-1"><strong>Target Role:</strong> {userCMF.targetRole}</p>
-            <p className="mb-2"><strong>Target Companies:</strong> {userCMF.targetCompanies}</p>
-            <div className="mb-2">
-              <strong>Must Haves:</strong>
-              <ul className="list-disc list-inside text-xs mt-1">
-                {userCMF.mustHaves.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        {/* Collapsible CMF Panel */}
+        <CollapsibleCMFPanel
+          userCMF={userCMF}
+          isCollapsed={isCMFPanelCollapsed}
+          onToggle={toggleCMFPanel}
+        />
 
         {/* Legend */}
         <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4">
@@ -376,6 +467,7 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
           isInWatchlist={isInWatchlist}
           onToggleWatchlist={toggleWatchlist}
           onCompanySelect={handleCompanySelectFromPanel}
+          onRequestDelete={handleRemoveRequest}
           viewMode={viewMode}
           watchlistStats={watchlistStats}
         />
@@ -386,6 +478,8 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         isOpen={showAddCompanyModal}
         onClose={() => setShowAddCompanyModal(false)}
         onAddCompany={handleAddCompany}
+        onCheckForRemovedCompany={checkForRemovedCompany}
+        onRestoreRemovedCompany={restoreRemovedCompany}
         userCMF={userCMF}
         existingCompanies={companies}
         onShowLLMSettings={() => setShowLLMSettings(true)}
@@ -396,6 +490,14 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         isOpen={showLLMSettings}
         onClose={() => setShowLLMSettings(false)}
         onSettingsUpdated={handleLLMSettingsUpdated}
+      />
+
+      {/* Remove Company Modal */}
+      <RemoveCompanyModal
+        isOpen={showRemoveConfirmation}
+        company={companyToRemove}
+        onConfirm={handleRemoveConfirm}
+        onCancel={handleRemoveCancel}
       />
     </div>
   );

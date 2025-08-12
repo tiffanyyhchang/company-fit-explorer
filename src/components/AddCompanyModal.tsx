@@ -9,6 +9,8 @@ interface AddCompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddCompany: (company: Company) => Promise<void>;
+  onCheckForRemovedCompany?: (companyName: string) => Company | null;
+  onRestoreRemovedCompany?: (company: Company) => void;
   userCMF: UserCMF;
   existingCompanies: Company[];
   onShowLLMSettings?: () => void;
@@ -28,6 +30,8 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
   isOpen,
   onClose,
   onAddCompany,
+  onCheckForRemovedCompany,
+  onRestoreRemovedCompany,
   userCMF,
   existingCompanies,
   onShowLLMSettings,
@@ -159,6 +163,18 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
 
   const handleConfirm = async () => {
     if (!companyPreview) return;
+    
+    // Check if this company was previously removed and can be restored
+    if (onCheckForRemovedCompany && onRestoreRemovedCompany) {
+      const removedCompany = onCheckForRemovedCompany(companyPreview.name);
+      if (removedCompany) {
+        console.log('Found previously removed company, restoring:', removedCompany.name);
+        onRestoreRemovedCompany(removedCompany);
+        onClose();
+        resetModal();
+        return;
+      }
+    }
     
     setStep('processing');
     

@@ -8,6 +8,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
   const mockOnCompanySelect = vi.fn()
   const mockIsInWatchlist = vi.fn(() => false)
   const mockOnToggleWatchlist = vi.fn()
+  const mockOnRequestDelete = vi.fn()
   const mockWatchlistStats = {
     totalCompanies: 0,
     excellentMatches: 0,
@@ -82,6 +83,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -116,6 +118,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -141,6 +144,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -187,6 +191,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -213,6 +218,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -246,6 +252,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -314,6 +321,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -334,6 +342,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
             onCompanySelect={mockOnCompanySelect}
             isInWatchlist={mockIsInWatchlist}
             onToggleWatchlist={mockOnToggleWatchlist}
+            onRequestDelete={mockOnRequestDelete}
             viewMode="explore"
             watchlistStats={mockWatchlistStats}
           />
@@ -357,6 +366,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
@@ -373,6 +383,7 @@ describe('Integration Tests - CompanyDetailPanel with Real Data', () => {
           onCompanySelect={mockOnCompanySelect}
           isInWatchlist={mockIsInWatchlist}
           onToggleWatchlist={mockOnToggleWatchlist}
+          onRequestDelete={mockOnRequestDelete}
           viewMode="explore"
           watchlistStats={mockWatchlistStats}
         />
