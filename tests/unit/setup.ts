@@ -75,6 +75,7 @@ vi.mock('cytoscape', () => {
       getElementById: vi.fn().mockReturnValue(mockElement),
       fit: vi.fn(),
       zoom: vi.fn().mockReturnValue(1),
+      pan: vi.fn().mockReturnValue({ x: 0, y: 0 }),
       destroy: vi.fn(),
       // Mock the core cytoscape instance for background clicks
       target: undefined,
