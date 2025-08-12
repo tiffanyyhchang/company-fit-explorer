@@ -1,13 +1,23 @@
-import React, { useState, useMemo } from 'react';
-import { CMFGraphExplorerProps, ViewMode } from '../types';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { CMFGraphExplorerProps, ViewMode, Company } from '../types';
 import { useCompanySelection } from '../hooks/useCompanySelection';
 import { useWatchlist } from '../hooks/useWatchlist';
 import CompanyGraph from './CompanyGraph';
 import CompanyDetailPanel from './CompanyDetailPanel';
+import AddCompanyModal from './AddCompanyModal';
+import { loadCustomCompanies, addCustomCompany, setupCrossTabSync } from '../utils/companyStateManager';
 
-const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies }) => {
+const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies: initialCompanies }) => {
   // View mode state
   const [viewMode, setViewMode] = useState<ViewMode>('explore');
+  
+  // Add Company modal state
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  
+  // Companies state with persistence (includes initial + custom companies)
+  const [companies, setCompanies] = useState<Company[]>(initialCompanies);
+  const [customCompanies, setCustomCompanies] = useState<Company[]>([]);
+  const [_isLoadingCustomCompanies, setIsLoadingCustomCompanies] = useState(true);
   
   // Company selection state
   const {
@@ -43,6 +53,32 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies 
     return companies;
   }, [companies, watchlistCompanies, viewMode]);
 
+  // Handle adding new company with persistence
+  const handleAddCompany = useCallback(async (newCompany: Company) => {
+    try {
+      // Add to persistent storage
+      const result = await addCustomCompany(newCompany, customCompanies);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to add company');
+      }
+      
+      // Update local state
+      setCustomCompanies(result.companies);
+      setCompanies(prev => [...prev, newCompany]);
+      
+      // Auto-select the new company after brief delay
+      setTimeout(() => {
+        handleCompanySelect(newCompany);
+      }, 1000);
+      
+      console.log('Company added and saved successfully:', newCompany.name);
+    } catch (error) {
+      console.error('Failed to add company:', error);
+      throw error; // Re-throw to let modal handle the error
+    }
+  }, [customCompanies, handleCompanySelect]);
+
   // Handle view mode toggle
   const handleViewModeChange = (newMode: ViewMode) => {
     setViewMode(newMode);
@@ -51,6 +87,49 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies 
       handleCompanySelect(null);
     }
   };
+
+  // Load custom companies on mount
+  useEffect(() => {
+    const loadCompanies = async () => {
+      try {
+        const { companies: savedCompanies, error } = loadCustomCompanies();
+        
+        if (error) {
+          console.warn('Error loading custom companies:', error);
+        }
+        
+        setCustomCompanies(savedCompanies);
+        
+        // Merge with initial companies, avoiding duplicates by ID
+        const existingIds = new Set(initialCompanies.map(c => c.id));
+        const newCustomCompanies = savedCompanies.filter(c => !existingIds.has(c.id));
+        
+        if (newCustomCompanies.length > 0) {
+          setCompanies(prev => [...prev, ...newCustomCompanies]);
+        }
+      } catch (error) {
+        console.error('Failed to load custom companies:', error);
+      } finally {
+        setIsLoadingCustomCompanies(false);
+      }
+    };
+    
+    loadCompanies();
+  }, [initialCompanies]);
+
+  // Setup cross-tab synchronization
+  useEffect(() => {
+    const cleanup = setupCrossTabSync((syncedCompanies) => {
+      setCustomCompanies(syncedCompanies);
+      
+      // Update main companies list
+      const existingIds = new Set(initialCompanies.map(c => c.id));
+      const validCustomCompanies = syncedCompanies.filter(c => !existingIds.has(c.id));
+      setCompanies([...initialCompanies, ...validCustomCompanies]);
+    });
+    
+    return cleanup;
+  }, [initialCompanies]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -185,6 +264,24 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies 
             </div>
           </div>
         )}
+
+        {/* Add Company Button */}
+        <div className="absolute bottom-6 right-6 z-10">
+          <button
+            onClick={() => setShowAddCompanyModal(true)}
+            className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white 
+              rounded-full shadow-lg hover:shadow-xl 
+              transition-all duration-200 ease-in-out
+              flex items-center justify-center
+              hover:scale-105 active:scale-95
+              focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50"
+            title="Add Company"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Side Panel */}
@@ -199,6 +296,15 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies 
           watchlistStats={watchlistStats}
         />
       </div>
+
+      {/* Add Company Modal */}
+      <AddCompanyModal
+        isOpen={showAddCompanyModal}
+        onClose={() => setShowAddCompanyModal(false)}
+        onAddCompany={handleAddCompany}
+        userCMF={userCMF}
+        existingCompanies={companies}
+      />
     </div>
   );
 };
