@@ -1,28 +1,23 @@
 import { UserCMF, Company } from '../types';
 
 const sampleUserCMF: UserCMF = {
-  id: "pierre-andre-galmes",
-  name: "John Smith",
+  id: "tiffany-chang",
+  name: "Tiffany Chang",
   mustHaves: [
-    "High Velocity of Execution",
-    "Growth-Oriented Environment", 
-    "People-First Mentality",
-    "Remote/San Diego Location"
+    "Strong product leader",
+    "Remote in EST", 
+    "Culture of experimentation",
+    "Dedicated Engineering team",
+    "Empowered product trios"
   ],
   wantToHave: [
-    "Product & Platform Strategy",
-    "Cross-Functional Collaboration",
-    "Customer-Obsessed Culture",
-    "Developer Success Focus",
-    "Technical Innovation (AI/ML)",
-    "Building High-Performing Product Teams",
-    "Ensuring Product Excellence & Craftsmanship",
-    "Accountability & Humility",
-    "Exploring Technical Depths & Innovation"
+    "Talking with users x2 weekly",
+    "Actively shape product strategy",
+    "Sense of community",
   ],
-  experience: ["AI/ML Products", "Data Pipelines", "Monetization", "Payments", "Gaming", "Trust & Safety"],
+  experience: ["B2B SaaS", "Cybersecurity", "K-12 Education", "Supply Chain", "Mental Health"],
   targetRole: "AI Trust and Safety Product Management (Group PM to VP-level)",
-  targetCompanies: "Late funding rounds and public companies focusing on AI trust and safety"
+  targetCompanies: "K-12 education technology (edtech) at a 200-250 person, growth-stage startup"
 };
 
 const sampleCompanies: Company[] = [
