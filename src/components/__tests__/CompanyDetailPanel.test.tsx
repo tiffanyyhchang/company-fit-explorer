@@ -331,7 +331,7 @@ describe('CompanyDetailPanel', () => {
       const closeButton = screen.getByTitle('Close details')
       fireEvent.click(closeButton)
       
-      expect(mockOnCompanySelect).toHaveBeenCalledWith(selectedCompany)
+      expect(mockOnCompanySelect).toHaveBeenCalledWith(null)
     })
 
     it('should handle clicking on related companies', () => {

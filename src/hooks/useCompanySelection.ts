@@ -32,9 +32,13 @@ export const useCompanySelection = () => {
     }
   };
 
-  const handleCompanySelectFromPanel = (company: Company) => {
+  const handleCompanySelectFromPanel = (company: Company | null) => {
     setSelectedCompany(company);
-    setHighlightedConnections(new Set(company.connections));
+    if (company) {
+      setHighlightedConnections(new Set(company.connections));
+    } else {
+      setHighlightedConnections(new Set());
+    }
   };
 
   return {

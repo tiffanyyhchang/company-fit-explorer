@@ -59,7 +59,7 @@ export interface CompanyDetailPanelProps {
   allCompanies: import('./index').Company[];
   isInWatchlist: (companyId: number) => boolean;
   onToggleWatchlist: (companyId: number) => void;
-  onCompanySelect: (company: import('./index').Company) => void;
+  onCompanySelect: (company: import('./index').Company | null) => void;
   viewMode: ViewMode;
   watchlistStats: WatchlistStats;
 }
