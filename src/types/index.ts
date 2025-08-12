@@ -78,3 +78,6 @@ export interface CompanyDetailPanelProps {
 
 // Export watchlist types
 export * from './watchlist';
+
+// Export LLM types
+export * from '../utils/llm/types';

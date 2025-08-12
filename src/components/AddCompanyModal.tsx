@@ -3,6 +3,7 @@ import { UserCMF, Company } from '../types';
 import { getCompanySuggestions, getPopularCompanies, CompanySuggestion } from '../utils/companySuggestions';
 import { getCompanyPreview, CompanyPreview, validateCompanyData } from '../utils/companyValidation';
 import { getColorForScore, generateCareerUrl } from '../utils/companyPositioning';
+import { llmService } from '../utils/llm/service';
 
 interface AddCompanyModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AddCompanyModalProps {
   onAddCompany: (company: Company) => Promise<void>;
   userCMF: UserCMF;
   existingCompanies: Company[];
+  onShowLLMSettings?: () => void;
 }
 
 type ModalStep = 'input' | 'confirm' | 'processing';
@@ -28,6 +30,7 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
   onAddCompany,
   userCMF,
   existingCompanies,
+  onShowLLMSettings,
 }) => {
   const [step, setStep] = useState<ModalStep>('input');
   const [companyName, setCompanyName] = useState('');
@@ -160,28 +163,58 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
     setStep('processing');
     
     try {
-      // Generate enhanced company data with smart positioning
-      const matchScore = Math.floor(Math.random() * 40) + 60; // Random score 60-100% for now
-      const industry = companyPreview.industry || 'Technology';
+      let companyData;
       
+      // Try LLM analysis first if configured
+      if (llmService.isConfigured()) {
+        try {
+          const llmResponse = await llmService.analyzeCompany({
+            companyName: companyPreview.name,
+            userCMF: {
+              targetRole: userCMF.targetRole,
+              mustHaves: userCMF.mustHaves,
+              wantToHave: userCMF.wantToHave,
+              experience: userCMF.experience,
+              targetCompanies: userCMF.targetCompanies
+            }
+          });
+
+          if (llmResponse.success && llmResponse.data) {
+            // Use LLM-generated data
+            companyData = llmResponse.data;
+            console.log('Generated company data with LLM:', companyData);
+          } else {
+            console.warn('LLM analysis failed, falling back to enhanced mock data:', llmResponse.error);
+            companyData = generateEnhancedMockData(companyPreview, userCMF);
+          }
+        } catch (llmError) {
+          console.warn('LLM analysis error, falling back to enhanced mock data:', llmError);
+          companyData = generateEnhancedMockData(companyPreview, userCMF);
+        }
+      } else {
+        // No LLM configured, use enhanced mock data
+        companyData = generateEnhancedMockData(companyPreview, userCMF);
+      }
+
+      // Create base company object with LLM or mock data
       const baseCompany: Company = {
         id: Date.now(), // Generate unique ID
-        name: companyPreview.name,
-        logo: companyPreview.logo || `https://ui-avatars.com/api/?name=${companyPreview.name}&background=random`,
-        matchScore,
-        industry,
-        stage: determineCompanyStage(companyPreview),
-        location: companyPreview.location || 'San Francisco, CA',
-        employees: companyPreview.employees || '~500',
-        remote: 'Remote-Friendly',
-        openRoles: Math.floor(Math.random() * 10) + 5,
+        name: companyData.name,
+        logo: companyPreview.logo || `https://ui-avatars.com/api/?name=${companyData.name}&background=random`,
+        matchScore: companyData.matchScore,
+        industry: companyData.industry,
+        stage: companyData.stage,
+        location: companyData.location,
+        employees: companyData.employees,
+        remote: companyData.remote,
+        openRoles: companyData.openRoles,
         connections: [], // Will be set by positioning logic
-        connectionTypes: {}, // Will be set by positioning logic
-        matchReasons: generateMatchReasons(companyPreview, userCMF),
-        color: getColorForScore(matchScore),
+        connectionTypes: companyData.connectionTypes || {},
+        matchReasons: companyData.matchReasons,
+        color: getColorForScore(companyData.matchScore),
         angle: 0, // Will be set by positioning logic
         distance: 0, // Will be set by positioning logic
-        careerUrl: generateCareerUrl(companyPreview.name, companyPreview.domain)
+        careerUrl: generateCareerUrl(companyData.name, companyPreview.domain)
       };
 
       // Import positioning utilities dynamically to avoid circular dependencies
@@ -190,8 +223,19 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
       // Find optimal position with collision detection
       const optimalPosition = findOptimalPosition(baseCompany, existingCompanies);
       
-      // Map connections to existing companies
-      const connectionMapping = mapConnectionsToExistingCompanies(baseCompany, existingCompanies);
+      // Map connections to existing companies (use LLM connections if available)
+      const connectionsToMap = companyData.connections || [];
+      const connectionTypesForMapping: Record<string, string> = {};
+      
+      connectionsToMap.forEach(conn => {
+        const connectionTypes = companyData.connectionTypes as Record<string, string> | undefined;
+        connectionTypesForMapping[conn] = (connectionTypes && connectionTypes[conn]) || 'Related Company';
+      });
+      
+      const connectionMapping = mapConnectionsToExistingCompanies({
+        ...baseCompany,
+        connectionTypes: connectionTypesForMapping
+      }, existingCompanies);
       
       // Final company with positioning and connections
       const finalCompany: Company = {
@@ -210,6 +254,42 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
       setError(errorMessages.apiError);
       setStep('confirm');
     }
+  };
+
+  // Enhanced mock data generation when LLM is not available
+  const generateEnhancedMockData = (preview: CompanyPreview, userCMF: UserCMF) => {
+    // More sophisticated mock score based on user criteria
+    const baseScore = 70;
+    let matchScore = baseScore;
+    
+    // Boost score if company industry aligns with user experience
+    if (userCMF.experience.some(exp => preview.industry?.toLowerCase().includes(exp.toLowerCase()))) {
+      matchScore += 10;
+    }
+    
+    // Boost score if company industry matches target companies pattern
+    if (userCMF.targetCompanies?.toLowerCase().includes(preview.industry?.toLowerCase() || '')) {
+      matchScore += 5;
+    }
+    
+    // Add some randomness but keep it reasonable
+    matchScore += Math.floor(Math.random() * 15) - 5; // -5 to +10 variation
+    matchScore = Math.min(95, Math.max(60, matchScore)); // Clamp between 60-95
+
+    return {
+      name: preview.name,
+      industry: preview.industry || 'Technology',
+      stage: determineCompanyStage(preview),
+      location: preview.location || 'San Francisco, CA',
+      employees: preview.employees || '~500',
+      remote: 'Remote-Friendly',
+      openRoles: Math.floor(Math.random() * 15) + 5,
+      matchScore,
+      matchReasons: generateMatchReasons(preview, userCMF),
+      connections: [], // Will be populated by positioning logic
+      connectionTypes: {},
+      description: preview.description || `${preview.name} is a technology company focused on innovation.`
+    };
   };
 
   // Helper function to determine company stage based on preview data
@@ -290,6 +370,29 @@ const AddCompanyModal: React.FC<AddCompanyModalProps> = ({
                   Enter the name of a company you'd like to add to your exploration.
                 </p>
               </div>
+
+              {/* LLM Enhancement Prompt */}
+              {!llmService.isConfigured() && onShowLLMSettings && (
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <svg className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm text-amber-800">
+                        <strong>Enhanced Analysis Available:</strong> Configure an AI provider for detailed 
+                        company insights, accurate match scoring, and industry connections.
+                      </p>
+                      <button 
+                        onClick={onShowLLMSettings}
+                        className="text-sm text-amber-700 underline hover:no-underline mt-1 font-medium"
+                      >
+                        Setup AI Provider →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               <div className="space-y-4">
                 <div className="relative">

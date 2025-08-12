@@ -5,7 +5,9 @@ import { useWatchlist } from '../hooks/useWatchlist';
 import CompanyGraph from './CompanyGraph';
 import CompanyDetailPanel from './CompanyDetailPanel';
 import AddCompanyModal from './AddCompanyModal';
+import LLMSettingsModal from './LLMSettingsModal';
 import { loadCustomCompanies, addCustomCompany, setupCrossTabSync } from '../utils/companyStateManager';
+import { llmService } from '../utils/llm/service';
 
 const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies: initialCompanies }) => {
   // View mode state
@@ -13,6 +15,10 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
   
   // Add Company modal state
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  
+  // LLM Settings modal state
+  const [showLLMSettings, setShowLLMSettings] = useState(false);
+  const [llmConfigured, setLLMConfigured] = useState(llmService.isConfigured());
   
   // Companies state with persistence (includes initial + custom companies)
   const [companies, setCompanies] = useState<Company[]>(initialCompanies);
@@ -65,7 +71,14 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
       
       // Update local state
       setCustomCompanies(result.companies);
-      setCompanies(prev => [...prev, newCompany]);
+      setCompanies(prev => {
+        // Check if company already exists to avoid duplicates
+        const exists = prev.some(c => c.id === newCompany.id || c.name.toLowerCase() === newCompany.name.toLowerCase());
+        if (exists) {
+          return prev;
+        }
+        return [...prev, newCompany];
+      });
       
       // Auto-select the new company after brief delay
       setTimeout(() => {
@@ -78,6 +91,35 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
       throw error; // Re-throw to let modal handle the error
     }
   }, [customCompanies, handleCompanySelect]);
+
+  // Handle LLM settings updates
+  const handleLLMSettingsUpdated = useCallback(() => {
+    setLLMConfigured(llmService.isConfigured());
+  }, []);
+
+  // Clean up duplicates function
+  const cleanupDuplicates = useCallback(() => {
+    setCompanies(prev => {
+      const uniqueCompanies = prev.reduce((acc, company) => {
+        const exists = acc.some(c => c.id === company.id || c.name.toLowerCase() === company.name.toLowerCase());
+        if (!exists) {
+          acc.push(company);
+        }
+        return acc;
+      }, [] as Company[]);
+      
+      if (uniqueCompanies.length !== prev.length) {
+        console.log(`Cleaned up ${prev.length - uniqueCompanies.length} duplicate companies`);
+      }
+      
+      return uniqueCompanies;
+    });
+  }, []);
+
+  // Run cleanup on mount
+  useEffect(() => {
+    cleanupDuplicates();
+  }, [cleanupDuplicates]);
 
   // Handle view mode toggle
   const handleViewModeChange = (newMode: ViewMode) => {
@@ -105,7 +147,15 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         const newCustomCompanies = savedCompanies.filter(c => !existingIds.has(c.id));
         
         if (newCustomCompanies.length > 0) {
-          setCompanies(prev => [...prev, ...newCustomCompanies]);
+          setCompanies(prev => {
+            // Add deduplication logic
+            const existingIds = new Set(prev.map(c => c.id));
+            const existingNames = new Set(prev.map(c => c.name.toLowerCase()));
+            const uniqueNewCompanies = newCustomCompanies.filter(c => 
+              !existingIds.has(c.id) && !existingNames.has(c.name.toLowerCase())
+            );
+            return [...prev, ...uniqueNewCompanies];
+          });
         }
       } catch (error) {
         console.error('Failed to load custom companies:', error);
@@ -122,10 +172,16 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
     const cleanup = setupCrossTabSync((syncedCompanies) => {
       setCustomCompanies(syncedCompanies);
       
-      // Update main companies list
-      const existingIds = new Set(initialCompanies.map(c => c.id));
-      const validCustomCompanies = syncedCompanies.filter(c => !existingIds.has(c.id));
-      setCompanies([...initialCompanies, ...validCustomCompanies]);
+      // Update main companies list with deduplication
+      const allCompanies = [...initialCompanies, ...syncedCompanies];
+      const uniqueCompanies = allCompanies.reduce((acc, company) => {
+        const exists = acc.some(c => c.id === company.id || c.name.toLowerCase() === company.name.toLowerCase());
+        if (!exists) {
+          acc.push(company);
+        }
+        return acc;
+      }, [] as Company[]);
+      setCompanies(uniqueCompanies);
     });
     
     return cleanup;
@@ -165,6 +221,34 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
               <span>Your Watchlist ({watchlistCompanyIds.size})</span>
             </button>
           </div>
+        </div>
+
+        {/* Settings & LLM Status */}
+        <div className="absolute top-4 right-4 z-10 flex items-center space-x-3">
+          {/* LLM Status Indicator */}
+          {llmConfigured && (
+            <div className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full flex items-center shadow-sm">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+              <span className="font-medium">{llmService.getSettings().provider.toUpperCase()} AI</span>
+            </div>
+          )}
+          
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowLLMSettings(true)}
+            className="p-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group"
+            title="AI Settings"
+          >
+            <svg 
+              className="w-5 h-5 text-gray-600 group-hover:text-gray-800 transition-colors" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
         </div>
 
         <CompanyGraph
@@ -304,6 +388,14 @@ const CMFGraphExplorer: React.FC<CMFGraphExplorerProps> = ({ userCMF, companies:
         onAddCompany={handleAddCompany}
         userCMF={userCMF}
         existingCompanies={companies}
+        onShowLLMSettings={() => setShowLLMSettings(true)}
+      />
+
+      {/* LLM Settings Modal */}
+      <LLMSettingsModal
+        isOpen={showLLMSettings}
+        onClose={() => setShowLLMSettings(false)}
+        onSettingsUpdated={handleLLMSettingsUpdated}
       />
     </div>
   );

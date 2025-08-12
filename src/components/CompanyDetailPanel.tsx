@@ -129,7 +129,7 @@ const CompanyDetailPanel: React.FC<CompanyDetailPanelProps> = ({
             </div>
           </div>
           <button
-            onClick={() => onCompanySelect(selectedCompany)}
+            onClick={() => onCompanySelect(null)}
             className="text-gray-400 hover:text-gray-600"
             title="Close details"
           >
